@@ -32,6 +32,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     explicit DijetTreeProducer(edm::ParameterSet const& cfg);
     virtual void beginJob();
     virtual void analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup);
+// edm::ParameterSet const& cfg
     virtual void endJob();
     virtual ~DijetTreeProducer();
     
@@ -101,32 +102,24 @@ class DijetTreeProducer : public edm::EDAnalyzer
 
     //---- NOISE FILTERS -------------------------
     triggerExpression::Data noiseFilterCache_;
-
     triggerExpression::Evaluator * HBHENoiseFilter_Selector_;
-    triggerExpression::Evaluator * CSCHaloNoiseFilter_Selector_;
-    triggerExpression::Evaluator * HCALlaserNoiseFilter_Selector_;
     triggerExpression::Evaluator * ECALDeadCellNoiseFilter_Selector_;
     triggerExpression::Evaluator * GoodVtxNoiseFilter_Selector_;
-    triggerExpression::Evaluator * TrkFailureNoiseFilter_Selector_;
     triggerExpression::Evaluator * EEBadScNoiseFilter_Selector_;
-    triggerExpression::Evaluator * ECALlaserNoiseFilter_Selector_;
-    triggerExpression::Evaluator * TrkPOGNoiseFilter_Selector_;
-    triggerExpression::Evaluator * TrkPOG_manystrip_NoiseFilter_Selector_;
-    triggerExpression::Evaluator * TrkPOG_toomanystrip_NoiseFilter_Selector_;
-    triggerExpression::Evaluator * TrkPOG_logError_NoiseFilter_Selector_;
+   triggerExpression::Evaluator * BeamHaloFilter_Selector_;
+    triggerExpression::Evaluator * HBHENoiseIsoFilter_Selector_;
+triggerExpression::Evaluator * BadChargedCandidateFilter_Selector_;
+triggerExpression::Evaluator * BadPFMuonFilter_Selector_;
 
     bool passFilterHBHE_;
-    bool passFilterCSCHalo_;
-    bool passFilterHCALlaser_;
-    bool passFilterECALDeadCell_;
+bool passFilterglobalSuperTightHalo2016_;
+ bool  passFilterHBHEIso_;
+   bool passFilterECALDeadCell_;
     bool passFilterGoodVtx_;
-    bool passFilterTrkFailure_;
     bool passFilterEEBadSc_;
-    bool passFilterECALlaser_;
-    bool passFilterTrkPOG_;
-    bool passFilterTrkPOG_manystrip_;
-    bool passFilterTrkPOG_toomanystrip_;
-    bool passFilterTrkPOG_logError_;
+bool passFilterBadChargedCandidate_;
+bool passFilterBadPFMuon_;
+
 
     //---- jet and genJet variables --------------
     std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*csvAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_,*nemfAK4_,*cemfAK4_;

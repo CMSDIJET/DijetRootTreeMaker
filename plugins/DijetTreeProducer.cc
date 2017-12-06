@@ -90,17 +90,13 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   
 
   HBHENoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_HBHENoiseFilter") );
-  CSCHaloNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_CSCTightHaloFilter") );
-  HCALlaserNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_hcalLaserEventFilter") );
+  BeamHaloFilter_Selector_= triggerExpression::parse(cfg.getParameter<std::string> ("noiseFilterSelection_globalSuperTightHalo2016Filter"));
+  HBHENoiseIsoFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_HBHENoiseIsoFilter") );
   ECALDeadCellNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_EcalDeadCellTriggerPrimitiveFilter") );
   GoodVtxNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_goodVertices") );
-  TrkFailureNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trackingFailureFilter") );
   EEBadScNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_eeBadScFilter") );
-  ECALlaserNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_ecalLaserCorrFilter") );
-  TrkPOGNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOGFilters") );
-  TrkPOG_manystrip_NoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOG_manystripclus53X") );
-  TrkPOG_toomanystrip_NoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOG_toomanystripclus53X") );
-  TrkPOG_logError_NoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOG_logErrorTooManyClusters") );
+ BadChargedCandidateFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_BadChargedCandidateFilter"));
+ BadPFMuonFilter_Selector_ = triggerExpression::parse(cfg.getParameter<std::string> ("noiseFilterSelection_BadPFMuonFilter"));
 
   if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
     cout<<"ERROR: the number of trigger aliases does not match the number of trigger names !!!"<<endl;
@@ -309,7 +305,8 @@ void DijetTreeProducer::beginJob()
   
   ptAK4PFCluster_             = new std::vector<float>;
   jecAK4PFCluster_            = new std::vector<float>;
-  etaAK4PFCluster_            = new std::vector<float>;
+  etaAK4PFCluster_            = new process.BadPFMuonFilter *
+process.BadChargedCandidateFilter *std::vector<float>;
   phiAK4PFCluster_            = new std::vector<float>;
   massAK4PFCluster_           = new std::vector<float>;
   energyAK4PFCluster_         = new std::vector<float>;
@@ -522,19 +519,13 @@ void DijetTreeProducer::beginJob()
 
   //------------------------------------------------------------------
   outTree_->Branch("passFilterHBHE"                 ,&passFilterHBHE_                ,"passFilterHBHE_/O");
-  outTree_->Branch("passFilterCSCHalo"              ,&passFilterCSCHalo_             ,"passFilterCSCHalo_/O");
-  outTree_->Branch("passFilterHCALlaser"            ,&passFilterHCALlaser_           ,"passFilterHCALlaser_/O");
+  outTree_->Branch("passFilterHBHEIso"                 ,&passFilterHBHEIso_                ,"passFilterHBHEIso_/O");
+  outTree_->Branch("passFilterglobalSuperTightHalo2016"              ,&passFilterglobalSuperTightHalo2016_             ,"passFilterglobalSuperTightHalo2016_/O");
   outTree_->Branch("passFilterECALDeadCell"         ,&passFilterECALDeadCell_        ,"passFilterECALDeadCell_/O");
   outTree_->Branch("passFilterGoodVtx"              ,&passFilterGoodVtx_             ,"passFilterGoodVtx_/O");
-  outTree_->Branch("passFilterTrkFailure"           ,&passFilterTrkFailure_          ,"passFilterTrkFailure_/O");
   outTree_->Branch("passFilterEEBadSc"              ,&passFilterEEBadSc_             ,"passFilterEEBadSc_/O");
-  outTree_->Branch("passFilterECALlaser"            ,&passFilterECALlaser_           ,"passFilterECALlaser_/O");
-  outTree_->Branch("passFilterTrkPOG"               ,&passFilterTrkPOG_              ,"passFilterTrkPOG_/O");
-  outTree_->Branch("passFilterTrkPOG_manystrip"     ,&passFilterTrkPOG_manystrip_    ,"passFilterTrkPOG_manystrip_/O");
-  outTree_->Branch("passFilterTrkPOG_toomanystrip"  ,&passFilterTrkPOG_toomanystrip_ ,"passFilterTrkPOG_toomanystrip_/O");
-  outTree_->Branch("passFilterTrkPOG_logError"      ,&passFilterTrkPOG_logError_     ,"passFilterTrkPOG_logError_/O");
-
-
+  outTree_->Branch("passFilterBadChargedCandidate"  ,&passFilterBadChargedCandidate_ ,"passFilterBadChargedCandidate_/O");
+  outTree_->Branch("passFilterBadPFMuon"            ,&passFilterBadPFMuon_          ,"passFilterBadPFMuon_/O");
   //------------------- MC ---------------------------------
   npu_                = new std::vector<float>;  
   Number_interactions = new std::vector<int>;
@@ -758,21 +749,17 @@ void DijetTreeProducer::endJob()
   }
 
   delete HBHENoiseFilter_Selector_;
-  delete CSCHaloNoiseFilter_Selector_;
-  delete HCALlaserNoiseFilter_Selector_;
+  delete BeamHaloFilter_Selector_;
+  delete HBHENoiseIsoFilter_Selector_;
   delete ECALDeadCellNoiseFilter_Selector_;
   delete GoodVtxNoiseFilter_Selector_;
-  delete TrkFailureNoiseFilter_Selector_;
   delete EEBadScNoiseFilter_Selector_;
-  delete ECALlaserNoiseFilter_Selector_;
-  delete TrkPOGNoiseFilter_Selector_;
-  delete TrkPOG_manystrip_NoiseFilter_Selector_;
-  delete TrkPOG_toomanystrip_NoiseFilter_Selector_;
-  delete TrkPOG_logError_NoiseFilter_Selector_;
-
+  delete BadChargedCandidateFilter_Selector_;
+  delete BadPFMuonFilter_Selector_;
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup) 
+void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup)
+// edm::ParameterSet const& cfg
 {
   initialize();
 
@@ -780,20 +767,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   Handle<pat::JetCollection> jetsAK4;
   iEvent.getByToken(srcJetsAK4_,jetsAK4);
 
-/*
-  edm::Handle<edm::View<reco::CaloJet> > jetsAK4Calo;
-  if(srcJetsAK4Calo_.label()!="")
-    iEvent.getByToken(srcJetsAK4Calo_,jetsAK4Calo);
 
-
-  edm::Handle<edm::View<reco::Jet> > jetsAK4PFCluster;
-  if(srcJetsAK4PFCluster_.label()!="")
-    iEvent.getByToken(srcJetsAK4PFCluster_,jetsAK4PFCluster);
-
-  edm::Handle<edm::View<reco::PFJet> > jetsAK4PFCalo;
-  if(srcJetsAK4PFCalo_.label()!="")
-    iEvent.getByToken(srcJetsAK4PFCalo_,jetsAK4PFCalo);
-*/
 
   //edm::Handle<edm::View<pat::Jet> > jetsAK8;
   Handle<pat::JetCollection> jetsAK8;
@@ -978,31 +952,27 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     
     if(noiseFilterCache_.configurationUpdated()) {
       HBHENoiseFilter_Selector_->init(noiseFilterCache_);
-      CSCHaloNoiseFilter_Selector_->init(noiseFilterCache_);
-      HCALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
+      BeamHaloFilter_Selector_->init(noiseFilterCache_);
+      HBHENoiseIsoFilter_Selector_->init(noiseFilterCache_);
       ECALDeadCellNoiseFilter_Selector_->init(noiseFilterCache_);
       GoodVtxNoiseFilter_Selector_->init(noiseFilterCache_);
-      TrkFailureNoiseFilter_Selector_->init(noiseFilterCache_);
-      EEBadScNoiseFilter_Selector_->init(noiseFilterCache_);
-      ECALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
-      TrkPOGNoiseFilter_Selector_->init(noiseFilterCache_);
-      TrkPOG_manystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
-      TrkPOG_toomanystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
-      TrkPOG_logError_NoiseFilter_Selector_->init(noiseFilterCache_);
+       EEBadScNoiseFilter_Selector_->init(noiseFilterCache_);
+    BadChargedCandidateFilter_Selector_->init(noiseFilterCache_);
+   BadPFMuonFilter_Selector_->init(noiseFilterCache_);
+
     }
+
+
+ 
 	
-    passFilterHBHE_ = (*HBHENoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterCSCHalo_ = (*CSCHaloNoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterHCALlaser_ = (*HCALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterECALDeadCell_ = (*ECALDeadCellNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterHBHE_ = (*HBHENoiseFilter_Selector_)(noiseFilterCache_); 
+     passFilterglobalSuperTightHalo2016_  = (*BeamHaloFilter_Selector_)(noiseFilterCache_);
+      passFilterHBHEIso_   =(*HBHENoiseIsoFilter_Selector_)(noiseFilterCache_);
+   passFilterECALDeadCell_ = (*ECALDeadCellNoiseFilter_Selector_)(noiseFilterCache_);    
     passFilterGoodVtx_ = (*GoodVtxNoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterTrkFailure_ = (*TrkFailureNoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterEEBadSc_ = (*EEBadScNoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterECALlaser_ = (*ECALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterTrkPOG_ = (*TrkPOGNoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterTrkPOG_manystrip_ = (*TrkPOG_manystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterTrkPOG_toomanystrip_ = (*TrkPOG_toomanystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
-    passFilterTrkPOG_logError_ = (*TrkPOG_logError_NoiseFilter_Selector_)(noiseFilterCache_);    
+   passFilterEEBadSc_ = (*EEBadScNoiseFilter_Selector_)(noiseFilterCache_); 
+passFilterBadChargedCandidate_ = (*BadChargedCandidateFilter_Selector_)(noiseFilterCache_);
+passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);      
   }
       //    }
   
@@ -1706,17 +1676,13 @@ void DijetTreeProducer::initialize()
   triggerResult_     ->clear();
   
   passFilterHBHE_                  = false;
-  passFilterCSCHalo_               = false;
-  passFilterHCALlaser_             = false;
+  passFilterglobalSuperTightHalo2016_  =  false;
+   passFilterHBHEIso_              = false;
   passFilterECALDeadCell_          = false;
   passFilterGoodVtx_               = false;
-  passFilterTrkFailure_            = false;
   passFilterEEBadSc_               = false;
-  passFilterECALlaser_             = false;
-  passFilterTrkPOG_                = false;
-  passFilterTrkPOG_manystrip_      = false;
-  passFilterTrkPOG_toomanystrip_   = false;
-  passFilterTrkPOG_logError_       = false;
+passFilterBadChargedCandidate_    = false;
+passFilterBadPFMuon_             = false;
 
   //----- MC -------
   npu_ ->clear();
@@ -1770,6 +1736,3 @@ DijetTreeProducer::~DijetTreeProducer()
 }
 
 DEFINE_FWK_MODULE(DijetTreeProducer);
-
-
-
