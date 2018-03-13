@@ -11,8 +11,8 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-#process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v8'
-process.GlobalTag.globaltag = THISGLOBALTAG
+process.GlobalTag.globaltag = '94X_dataRun2_ReReco17_forValidation'
+#process.GlobalTag.globaltag = THISGLOBALTAG
 
 #--------------------- Report and output ---------------------------
 # Note: in grid runs this parameter is not used.
@@ -23,8 +23,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 
 process.TFileService=cms.Service("TFileService",
-                                 #fileName=cms.string('test.root'),
-                                 fileName=cms.string(THISROOTFILE),
+                                 fileName=cms.string('test.root'),
+                                 #fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -40,7 +40,7 @@ process.out = cms.OutputModule('PoolOutputModule',
                                fileName = cms.untracked.string('jettoolbox.root'),                                                                              
                                outputCommands = cms.untracked.vstring([                                                                 
                                                                       'keep *_slimmedJets_*_*',                                                                  
-                                                                      'keep *_slimmedJetsAK8_*_*',                                                                  
+                                                                                                                                     
                                                                        ])                                                                                           
                                )
 
@@ -49,7 +49,6 @@ process.out = cms.OutputModule('PoolOutputModule',
 process.chs = cms.EDFilter('CandPtrSelector', src = cms.InputTag('packedPFCandidates'), cut = cms.string('vertexRef().isNonnull() && fromPV'))
 
 from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
-process.slimmedGenJetsAK8 = ak4GenJets.clone(src = 'packedGenParticles', rParam = 0.8)
 
 
 #-------------------------------------------------------
@@ -71,7 +70,6 @@ process.prunedGenParticlesDijet = cms.EDProducer('GenParticlePruner',
 #already in toolbox, just add keep statements
 
 process.out.outputCommands.append("keep *_slimmedGenJets_*_*")
-process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 
 ##-------------------- Define the source  ----------------------------
 
@@ -84,7 +82,9 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring("root://eoscms//eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/730/00000/EA345ED4-B821-E611-BEA5-02163E0138E2.root")
-    fileNames = cms.untracked.vstring("/store/data/Run2016G/JetHT/MINIAOD/PromptReco-v1/000/279/588/00000/02E756F7-0C6F-E611-BF1E-02163E0145C2.root")
+    fileNames = cms.untracked.vstring("file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FCF0D2A4-DCDE-E711-9612-02163E01A5B6.root",
+"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE1B80E8-49E0-E711-A6CD-02163E014637.root",
+"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE551C87-8FDF-E711-8DAC-002590200A80.root")
     
 )
 
@@ -104,19 +104,19 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   ## JETS/MET ########################################
   jetsAK4             = cms.InputTag('slimmedJets'), 
-  jetsAK8             = cms.InputTag('slimmedJetsAK8'),     
+  #jetsAK8             = cms.InputTag('slimmedJetsAK8'),     
   rho              = cms.InputTag('fixedGridRhoFastjetAll'),
   met              = cms.InputTag('slimmedMETs'),
   vtx              = cms.InputTag('offlineSlimmedPrimaryVertices'),
   ptMinAK4         = cms.double(10),
-  ptMinAK8         = cms.double(10),
+ # ptMinAK8         = cms.double(10),
   
   ## MC ########################################
   pu               = cms.untracked.InputTag('slimmedAddPileupInfo'), # Updated from untracked to 80X by Juska
   ptHat            = cms.untracked.InputTag('generator'), # Why do these need to be 'untracked' anyway?
   genParticles     = cms.InputTag('prunedGenParticlesDijet'),
   genJetsAK4             = cms.InputTag('slimmedGenJets'), 
-  genJetsAK8             = cms.InputTag('slimmedGenJetsAK8'),  
+ # genJetsAK8             = cms.InputTag('slimmedGenJetsAK8'),  
 
 
   ## trigger ###################################
@@ -127,7 +127,6 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   triggerAlias     = cms.vstring('PFHT780','PFHT890','PFHT1050',
                                  'PFJET400','PFJET450','PFJET500','PFJET550',
                                  'Mu50',
-                                 'AK8PFJet320', 'AK8PFJet400','AK8PFJet450','AK8PFJet500','AK8PFJet550',
 		                 'CaloJet500NoJetID','CaloJet550NoJetID',                               'HLT_PFHT500_PFMET100_PFMHT100_IDTight','HLT_PFHT500_PFMET110_PFMHT110_IDTight','HLT_PFHT700_PFMET85_PFMHT85_IDTight','HLT_PFHT700_PFMET95_PFMHT95_IDTight',
 'HLT_PFHT800_PFMET75_PFMHT75_IDTight','HLT_PFHT800_PFMET85_PFMHT85_IDTight',
 'PFHT380_SixJet32_DoubleBTagCSV_p075', 
@@ -147,11 +146,6 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
      'HLT_PFJet500_v*', # it exists and it is unprescaled
      'HLT_PFJet550_v*', # it exists and it is unprescaled
      'HLT_Mu50_v*', 	# it exists and it is unprescaled
-     'HLT_AK8PFJet320_v*',# it exists and it is prerescaled
-     'HLT_AK8PFJet400_v*',# it exists and it is unprescaled  
-     'HLT_AK8PFJet450_v*',# it exists and it is unprescaled
-     'HLT_AK8PFJet500_v*',# it exists and it is unprescaled
-     'HLT_AK8PFJet550_v*',# it exists and it is unprescaled
      'HLT_CaloJet500_NoJetID_v*', # it exists and it is unprescaled
      'HLT_CaloJet550_NoJetID_v*', # it exists and it is unprescaled
      'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v*', # it exists and it is unprescaled
@@ -208,16 +202,9 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK4PFchs.txt'),
   L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK4PFchs.txt'),
   ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
-  L1corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK8PFchs.txt'),
-  L2corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK8PFchs.txt'),
-  L3corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK8PFchs.txt'),
-  ResCorrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
   L1corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L1FastJet_AK4PFchs.txt'),
   L2corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L2Relative_AK4PFchs.txt'),
   L3corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK4PFchs.txt'),
-  L1corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L1FastJet_AK8PFchs.txt'),
-  L2corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L2Relative_AK8PFchs.txt'),
-  L3corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK8PFchs.txt')
 
 
 

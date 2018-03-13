@@ -44,10 +44,8 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   srcJetsAK4Calo_         = cfg.getParameter<edm::InputTag>             ("jetsAK4Calo");
   srcJetsAK4PFCluster_         = cfg.getParameter<edm::InputTag>             ("jetsAK4PFCluster");
   srcJetsAK4PFCalo_         = cfg.getParameter<edm::InputTag>             ("jetsAK4PFCalo");
-  srcJetsAK8_         = cfg.getParameter<edm::InputTag>             ("jetsAK8");
   //srcJetsCA8_         = cfg.getParameter<edm::InputTag>             ("jetsCA8");
   srcGenJetsAK4_      = cfg.getParameter<edm::InputTag>             ("genJetsAK4");
-  srcGenJetsAK8_      = cfg.getParameter<edm::InputTag>             ("genJetsAK8");
   //srcGenJetsCA8_      = cfg.getParameter<edm::InputTag>             ("genJetsCA8");
   srcRho_             = cfg.getParameter<edm::InputTag>             ("rho");
   srcMET_             = cfg.getParameter<edm::InputTag>             ("met");
@@ -60,14 +58,12 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   // Migrate to Consumes-system. Skip Calo-stuff
   
   srcJetsAK4_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jetsAK4")));
-  srcJetsAK8_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jetsAK8")));
   
   srcRho_             = (consumes<double>(cfg.getParameter<edm::InputTag>             ("rho")));
   srcMET_             = (consumes<vector <pat::MET> >(cfg.getParameter<edm::InputTag>             ("met")));
   srcVrtx_            = (consumes<reco::VertexCollection>(cfg.getParameter<edm::InputTag>             ("vtx")));
   
   ptMinAK4_           = cfg.getParameter<double>                    ("ptMinAK4");
-  ptMinAK8_           = cfg.getParameter<double>                    ("ptMinAK8");
   
   srcPU_              = consumes<std::vector<PileupSummaryInfo> >(cfg.getUntrackedParameter<edm::InputTag>    ("pu"));
   //PUInfoToken = consumes<std::vector<PileupSummaryInfo> >(iConfig.getParameter<edm::InputTag>("PUInfoInputTag"));
@@ -76,7 +72,6 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   isData_ = cfg.getParameter<bool>("isData");
   if (!isData_){
      srcGenJetsAK4_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK4")));
-     srcGenJetsAK8_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK8")));
      srcPrunedGenParticles_ = (consumes<reco::GenParticleCollection>(cfg.getParameter<edm::InputTag>          ("genParticles")));
      srcGenInfo_           = consumes<GenEventInfoProduct>(cfg.getUntrackedParameter<edm::InputTag>  ("ptHat"));
      //srcPU_              = cfg.getUntrackedParameter<edm::InputTag>    ("pu",edm::InputTag(""));
@@ -117,15 +112,6 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   L1corrAK4_MC_ = cfg.getParameter<edm::FileInPath>("L1corrAK4_MC");
   L2corrAK4_MC_ = cfg.getParameter<edm::FileInPath>("L2corrAK4_MC");
   L3corrAK4_MC_ = cfg.getParameter<edm::FileInPath>("L3corrAK4_MC");
-  // AK8 DATA
-  L1corrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("L1corrAK8_DATA");
-  L2corrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("L2corrAK8_DATA");
-  L3corrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("L3corrAK8_DATA");
-  ResCorrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("ResCorrAK8_DATA");
-  // AK8 MC
-  L1corrAK8_MC_ = cfg.getParameter<edm::FileInPath>("L1corrAK8_MC");
-  L2corrAK8_MC_ = cfg.getParameter<edm::FileInPath>("L2corrAK8_MC");
-  L3corrAK8_MC_ = cfg.getParameter<edm::FileInPath>("L3corrAK8_MC");
 
   if(redoJECs_)
   {
@@ -151,27 +137,7 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
     JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
     JetCorrectorAK4_MC = new FactorizedJetCorrector(vParAK4_MC);
 
-    // AK8
-    L1ParAK8_DATA = new JetCorrectorParameters(L1corrAK8_DATA_.fullPath());
-    L2ParAK8_DATA = new JetCorrectorParameters(L2corrAK8_DATA_.fullPath());
-    L3ParAK8_DATA = new JetCorrectorParameters(L3corrAK8_DATA_.fullPath());
-    L2L3ResAK8_DATA = new JetCorrectorParameters(ResCorrAK8_DATA_.fullPath());
-    L1ParAK8_MC = new JetCorrectorParameters(L1corrAK8_MC_.fullPath());
-    L2ParAK8_MC = new JetCorrectorParameters(L2corrAK8_MC_.fullPath());
-    L3ParAK8_MC = new JetCorrectorParameters(L3corrAK8_MC_.fullPath());
 
-    std::vector<JetCorrectorParameters> vParAK8_DATA;
-    std::vector<JetCorrectorParameters> vParAK8_MC;
-    vParAK8_DATA.push_back(*L1ParAK8_DATA);
-    vParAK8_DATA.push_back(*L2ParAK8_DATA);
-    vParAK8_DATA.push_back(*L3ParAK8_DATA);
-    vParAK8_DATA.push_back(*L2L3ResAK8_DATA);
-    vParAK8_MC.push_back(*L1ParAK8_MC);
-    vParAK8_MC.push_back(*L2ParAK8_MC);
-    vParAK8_MC.push_back(*L3ParAK8_MC);
-
-    JetCorrectorAK8_DATA = new FactorizedJetCorrector(vParAK8_DATA);
-    JetCorrectorAK8_MC = new FactorizedJetCorrector(vParAK8_MC);
   }
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -245,16 +211,6 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("mjjAK4"             ,&mjjAK4_            ,"mjjAK4_/F"		);
   outTree_->Branch("dEtajjAK4"          ,&dEtajjAK4_         ,"dEtajjAK4_/F"		);
   outTree_->Branch("dPhijjAK4"          ,&dPhijjAK4_         ,"dPhijjAK4_/F"		); 
-  outTree_->Branch("nJetsAK8"           ,&nJetsAK8_          ,"nJetsAK8_/I"		);
-  outTree_->Branch("htAK8"              ,&htAK8_             ,"htAK8_/F"		);
-  outTree_->Branch("mjjAK8"             ,&mjjAK8_            ,"mjjAK8_/F"		);
-  outTree_->Branch("dEtajjAK8"          ,&dEtajjAK8_         ,"dEtajjAK8_/F"		);
-  outTree_->Branch("dPhijjAK8"          ,&dPhijjAK8_         ,"dPhijjAK8_/F"		); 
-  // outTree_->Branch("nJetsCA8"           ,&nJetsCA8_          ,"nJetsCA8_/I"		);
-  // outTree_->Branch("htCA8"           ,&htCA8_             ,"htCA8_/F"		);
-  // outTree_->Branch("mjjCA8"          ,&mjjCA8_            ,"mjjCA8_/F"		);
-  // outTree_->Branch("dEtajjCA8"       ,&dEtajjCA8_         ,"dEtajjCA8_/F"	);
-  // outTree_->Branch("dPhijjCA8"       ,&dPhijjCA8_         ,"dPhijjCA8_/F"	); 
 
   //------------------------------------------------------------------
   ptAK4_             = new std::vector<float>;
@@ -400,118 +356,6 @@ process.BadChargedCandidateFilter *std::vector<float>;
   outTree_->Branch("jetEmfAK4PFCalo"               ,"vector<float>"     ,&emfAK4PFCalo_);
 */
 
-  ptAK8_             = new std::vector<float>;
-  jecAK8_            = new std::vector<float>;
-  etaAK8_            = new std::vector<float>;
-  phiAK8_            = new std::vector<float>;
-  massAK8_           = new std::vector<float>;
-  energyAK8_         = new std::vector<float>;
-  areaAK8_           = new std::vector<float>;
-  csvAK8_            = new std::vector<float>;
-  pFlavourAK8_       = new std::vector<int>;
-  hFlavourAK8_       = new std::vector<int>;
-  nbHadAK8_          = new std::vector<int>;
-  ncHadAK8_          = new std::vector<int>;
-  chfAK8_            = new std::vector<float>;
-  nhfAK8_            = new std::vector<float>;
-  phfAK8_            = new std::vector<float>;
-  mufAK8_            = new std::vector<float>;
-  elfAK8_            = new std::vector<float>;
-  nemfAK8_           = new std::vector<float>;
-  cemfAK8_           = new std::vector<float>;
-  // Hadronic forward hadrons
-  hf_hfAK8_          = new std::vector<float>;
-  // Hadronic forward photons
-  hf_emfAK8_         = new std::vector<float>;
-  hofAK8_            = new std::vector<float>;
-  idLAK8_            = new std::vector<int>;
-  idTAK8_            = new std::vector<int>;
-  massPrunedAK8_     = new std::vector<float>;
-  massSoftDropAK8_   = new std::vector<float>;
-  tau1AK8_           = new std::vector<float>;
-  tau2AK8_           = new std::vector<float>;
-  tau3AK8_           = new std::vector<float>;
-  chHadMultAK8_      = new std::vector<int>;   
-  chMultAK8_         = new std::vector<int>;
-  neHadMultAK8_      = new std::vector<int>; 
-  neMultAK8_         = new std::vector<int>;
-  phoMultAK8_        = new std::vector<int>;
- 
-  //dRAK8_             = new std::vector<float>;
-  outTree_->Branch("jetPtAK8"                ,"vector<float>"     ,&ptAK8_);
-  outTree_->Branch("jetJecAK8"               ,"vector<float>"     ,&jecAK8_);
-  outTree_->Branch("jetEtaAK8"               ,"vector<float>"     ,&etaAK8_);
-  outTree_->Branch("jetPhiAK8"               ,"vector<float>"     ,&phiAK8_);
-  outTree_->Branch("jetMassAK8"              ,"vector<float>"     ,&massAK8_);
-  outTree_->Branch("jetEnergyAK8"            ,"vector<float>"     ,&energyAK8_);
-  outTree_->Branch("jetAreaAK8"              ,"vector<float>"     ,&areaAK8_);
-  outTree_->Branch("jetCSVAK8"               ,"vector<float>"     ,&csvAK8_);
-  outTree_->Branch("pFlavourAK8"             ,"vector<int>"       ,&pFlavourAK8_);
-  outTree_->Branch("hFlavourAK8"             ,"vector<int>"       ,&hFlavourAK8_);
-  outTree_->Branch("nbHadAK8"                ,"vector<int>"       ,&nbHadAK8_);
-  outTree_->Branch("ncHadAK8"                ,"vector<int>"       ,&ncHadAK8_);
-  outTree_->Branch("jetChfAK8"               ,"vector<float>"     ,&chfAK8_);
-  outTree_->Branch("jetNhfAK8"               ,"vector<float>"     ,&nhfAK8_);
-  outTree_->Branch("jetPhfAK8"               ,"vector<float>"     ,&phfAK8_);
-  outTree_->Branch("jetMufAK8"               ,"vector<float>"     ,&mufAK8_);
-  outTree_->Branch("jetElfAK8"               ,"vector<float>"     ,&elfAK8_); 
-  outTree_->Branch("jetNemfAK8"              ,"vector<float>"     ,&nemfAK8_);
-  outTree_->Branch("jetCemfAK8"              ,"vector<float>"     ,&cemfAK8_);
-  outTree_->Branch("jetHf_hfAK8"             ,"vector<float>"     ,&hf_hfAK8_);
-  outTree_->Branch("jetHf_emfAK8"            ,"vector<float>"     ,&hf_emfAK8_);
-  outTree_->Branch("jetHofAK8"               ,"vector<float>"     ,&hofAK8_);
-  outTree_->Branch("idLAK8"                  ,"vector<int>"      ,&idLAK8_);   
-  outTree_->Branch("idTAK8"                  ,"vector<int>"      ,&idTAK8_);   
-  outTree_->Branch("jetMassPrunedAK8"        ,"vector<float>"     ,&massPrunedAK8_);
-  outTree_->Branch("jetMassSoftDropAK8"      ,"vector<float>"     ,&massSoftDropAK8_);
-  outTree_->Branch("jetTau1AK8"              ,"vector<float>"     ,&tau1AK8_);
-  outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
-  outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_); 
-  //outTree_->Branch("jetDRAK8"                ,"vector<float>"     ,&dRAK8_); 
-  outTree_->Branch("chHadMultAK8"          ,"vector<int>"      ,&chHadMultAK8_);   
-  outTree_->Branch("chMultAK8"              ,"vector<int>"      ,&chMultAK8_);   
-  outTree_->Branch("neHadMultAK8"           ,"vector<int>"      ,&neHadMultAK8_);   
-  outTree_->Branch("neMultAK8"              ,"vector<int>"      ,&neMultAK8_);   
-  outTree_->Branch("phoMultAK8"             ,"vector<int>"      ,&phoMultAK8_);   
- 
-  // ptCA8_             = new std::vector<float>;
-  // jecCA8_            = new std::vector<float>;
-  // etaCA8_            = new std::vector<float>;
-  // phiCA8_            = new std::vector<float>;
-  // massCA8_           = new std::vector<float>;
-  // energyCA8_         = new std::vector<float>;
-  // chfCA8_            = new std::vector<float>;
-  // nhfCA8_            = new std::vector<float>;
-  // phfCA8_            = new std::vector<float>;
-  // mufCA8_            = new std::vector<float>;
-  // elfCA8_            = new std::vector<float>;
-  // idLCA8_            = new std::vector<int>;
-  // idTCA8_            = new std::vector<int>;
-  // massPrunedCA8_     = new std::vector<float>;
-  // tau1CA8_           = new std::vector<float>;
-  // tau2CA8_           = new std::vector<float>;
-  // tau3CA8_           = new std::vector<float>;
-  // //dRCA8_             = new std::vector<float>;
-  // outTree_->Branch("jetPtCA8"                ,"vector<float>"     ,&ptCA8_);
-  // outTree_->Branch("jetJecCA8"               ,"vector<float>"     ,&jecCA8_);
-  // outTree_->Branch("jetEtaCA8"               ,"vector<float>"     ,&etaCA8_);
-  // outTree_->Branch("jetPhiCA8"               ,"vector<float>"     ,&phiCA8_);
-  // outTree_->Branch("jetMassCA8"              ,"vector<float>"     ,&massCA8_);
-  // outTree_->Branch("jetEnergyCA8"            ,"vector<float>"     ,&energyCA8_);
-  // outTree_->Branch("jetChfCA8"               ,"vector<float>"     ,&chfCA8_);
-  // outTree_->Branch("jetNhfCA8"               ,"vector<float>"     ,&nhfCA8_);
-  // outTree_->Branch("jetPhfCA8"               ,"vector<float>"     ,&phfCA8_);
-  // outTree_->Branch("jetMufCA8"               ,"vector<float>"     ,&mufCA8_);
-  // outTree_->Branch("jetElfCA8"               ,"vector<float>"     ,&elfCA8_);   
-  // outTree_->Branch("idLCA8"                  ,"vector<int>"      ,&idLCA8_);   
-  // outTree_->Branch("idTCA8"                  ,"vector<int>"      ,&idTCA8_);   
-  // outTree_->Branch("jetMassPrunedCA8"        ,"vector<float>"     ,&massPrunedCA8_);
-  // outTree_->Branch("jetTau1CA8"              ,"vector<float>"     ,&tau1CA8_);
-  // outTree_->Branch("jetTau2CA8"              ,"vector<float>"     ,&tau2CA8_);
-  // outTree_->Branch("jetTau3CA8"              ,"vector<float>"     ,&tau3CA8_);
-  // //outTree_->Branch("jetDRCA8"                ,"vector<float>"     ,&dRCA8_); 
-
-
 
   //------------------------------------------------------------------
   triggerResult_ = new std::vector<bool>;
@@ -539,7 +383,6 @@ process.BadChargedCandidateFilter *std::vector<float>;
   outTree_->Branch("weight"               ,&weight_            ,"weight_/F");
 
   outTree_->Branch("nGenJetsAK4"             ,&nGenJetsAK4_          ,"nGenJetsAK4_/I");
-  outTree_->Branch("nGenJetsAK8"             ,&nGenJetsAK8_          ,"nGenJetsAK8_/I");
   //  outTree_->Branch("nGenJetsCA8"             ,&nGenJetsCA8_          ,"nGenJetsCA8_/I");
 
   // ptGenCA8_             = new std::vector<float>;
@@ -552,29 +395,12 @@ process.BadChargedCandidateFilter *std::vector<float>;
   phiGenAK4_            = new std::vector<float>;
   massGenAK4_           = new std::vector<float>;
   energyGenAK4_         = new std::vector<float>;
-  ptGenAK8_             = new std::vector<float>;
-  etaGenAK8_            = new std::vector<float>;
-  phiGenAK8_            = new std::vector<float>;
-  massGenAK8_           = new std::vector<float>;
-  energyGenAK8_         = new std::vector<float>;
 
   outTree_->Branch("jetPtGenAK4"                ,"vector<float>"     ,&ptGenAK4_);
   outTree_->Branch("jetEtaGenAK4"               ,"vector<float>"     ,&etaGenAK4_);
   outTree_->Branch("jetPhiGenAK4"               ,"vector<float>"     ,&phiGenAK4_);
   outTree_->Branch("jetMassGenAK4"              ,"vector<float>"     ,&massGenAK4_);
   outTree_->Branch("jetEnergyGenAK4"            ,"vector<float>"     ,&energyGenAK4_);
-  outTree_->Branch("jetPtGenAK8"                ,"vector<float>"     ,&ptGenAK8_);
-  outTree_->Branch("jetEtaGenAK8"               ,"vector<float>"     ,&etaGenAK8_);
-  outTree_->Branch("jetPhiGenAK8"               ,"vector<float>"     ,&phiGenAK8_);
-  outTree_->Branch("jetMassGenAK8"              ,"vector<float>"     ,&massGenAK8_);
-  outTree_->Branch("jetEnergyGenAK8"            ,"vector<float>"     ,&energyGenAK8_);
-  // outTree_->Branch("jetPtGenCA8"                ,"vector<float>"     ,&ptGenCA8_);
-  // outTree_->Branch("jetEtaGenCA8"               ,"vector<float>"     ,&etaGenCA8_);
-  // outTree_->Branch("jetPhiGenCA8"               ,"vector<float>"     ,&phiGenCA8_);
-  // outTree_->Branch("jetMassGenCA8"              ,"vector<float>"     ,&massGenCA8_);
-  // outTree_->Branch("jetEnergyGenCA8"            ,"vector<float>"     ,&energyGenCA8_);
-
-
 
 
 }
@@ -670,79 +496,6 @@ void DijetTreeProducer::endJob()
   delete emfAK4PFCalo_;
 */
 
-  delete ptAK8_;
-  delete jecAK8_;
-  delete etaAK8_;
-  delete phiAK8_;
-  delete massAK8_;
-  delete energyAK8_;
-  delete areaAK8_;
-  delete csvAK8_;
-  delete pFlavourAK8_;
-  delete hFlavourAK8_;
-  delete nbHadAK8_;
-  delete ncHadAK8_;
-  delete chfAK8_;
-  delete nhfAK8_;
-  delete phfAK8_;
-  delete mufAK8_;
-  delete elfAK8_;
-  delete nemfAK8_;
-  delete cemfAK8_;
-  delete hf_hfAK8_;
-  delete hf_emfAK8_;
-  delete hofAK8_;
-  delete idLAK8_;
-  delete idTAK8_;
-  delete massPrunedAK8_;
-  delete massSoftDropAK8_;
-  delete tau1AK8_;
-  delete tau2AK8_;
-  delete tau3AK8_;
-  delete chHadMultAK8_;
-  delete chMultAK8_    ;
-  delete neHadMultAK8_ ;
-  delete neMultAK8_    ;
-  delete phoMultAK8_   ;
-
-  //delete dRAK8_;
-  
-  // delete ptCA8_;
-  // delete jecCA8_;
-  // delete etaCA8_;
-  // delete phiCA8_;
-  // delete massCA8_;
-  // delete energyCA8_;
-  // delete chfCA8_;
-  // delete nhfCA8_;
-  // delete phfCA8_;
-  // delete mufCA8_;
-  // delete elfCA8_;
-  // delete idLCA8_;
-  // delete idTCA8_;
-  // delete massPrunedCA8_;
-  // delete tau1CA8_;
-  // delete tau2CA8_;
-  // delete tau3CA8_;
-  // //delete dRCA8_;
-  
-  // delete ptGenCA8_      ;
-  // delete etaGenCA8_     ;
-  // delete phiGenCA8_     ;
-  // delete massGenCA8_    ;
-  // delete energyGenCA8_  ;
-  // delete ptGenAK4_      ;
-  // delete etaGenAK4_     ;
-  // delete phiGenAK4_     ;
-  // delete massGenAK4_    ;
-  // delete energyGenAK4_  ;
-  // delete ptGenAK8_      ;
-  // delete etaGenAK8_     ;
-  // delete phiGenAK8_     ;
-  // delete massGenAK8_    ;
-  // delete energyGenAK8_  ;
-
-
   
   for(unsigned i=0;i<vtriggerSelector_.size();i++) {
     delete vtriggerSelector_[i];
@@ -767,29 +520,10 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   Handle<pat::JetCollection> jetsAK4;
   iEvent.getByToken(srcJetsAK4_,jetsAK4);
 
-
-
-  //edm::Handle<edm::View<pat::Jet> > jetsAK8;
-  Handle<pat::JetCollection> jetsAK8;
-  iEvent.getByToken(srcJetsAK8_,jetsAK8);
-
-  // edm::Handle<edm::View<pat::Jet> > jetsCA8;
-  // iEvent.getByToken(srcJetsCA8_,jetsCA8);
-  // edm::View<pat::Jet> pat_jetsCA8 = *jetsCA8;
-
   //edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK4;
   Handle<reco::GenJetCollection> handle_genJetsAK4;
   if (!iEvent.isRealData())
     iEvent.getByToken(srcGenJetsAK4_,handle_genJetsAK4);
-
-  //edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK8;
-  Handle<reco::GenJetCollection> handle_genJetsAK8;
-  if (!iEvent.isRealData())
-    iEvent.getByToken(srcGenJetsAK8_,handle_genJetsAK8);
-  
-  // edm::Handle<edm::View<reco::GenJet> > handle_genJetsCA8;
-  // iEvent.getByToken(srcGenJetsCA8_,handle_genJetsCA8);
-  // edm::View<reco::GenJet> genJetsCA8 = *handle_genJetsCA8;
 
   Handle<double>  rho;
   iEvent.getByToken(srcRho_,rho);
@@ -1219,234 +953,6 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
     dPhijjAK4_ = fabs(deltaPhi((*phiAK4_)[0],(*phiAK4_)[1]));
   }
 
-
-  // AK8
-  std::vector<double> jecFactorsAK8;
-  std::vector<unsigned> sortedAK8JetIdx;
-  if(redoJECs_)
-    {
-      // sort AK8 jets by increasing pT
-      std::multimap<double, unsigned> sortedAK8Jets;
-      for(pat::JetCollection::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
-	{
-	  double correction = 1.;
-
-	  JetCorrectorAK8_DATA->setJetEta(ijet->eta());
-	  JetCorrectorAK8_DATA->setJetPt(ijet->correctedJet(0).pt());
-	  JetCorrectorAK8_DATA->setJetA(ijet->jetArea());
-	  JetCorrectorAK8_DATA->setRho(rho_);
-	  JetCorrectorAK8_MC->setJetEta(ijet->eta());
-	  JetCorrectorAK8_MC->setJetPt(ijet->correctedJet(0).pt());
-	  JetCorrectorAK8_MC->setJetA(ijet->jetArea());
-	  JetCorrectorAK8_MC->setRho(rho_);
-
-	  if (iEvent.isRealData()) 
-	    correction = JetCorrectorAK8_DATA->getCorrection();
-	  else
-	    correction = JetCorrectorAK8_MC->getCorrection();
-
-
-	  jecFactorsAK8.push_back(correction);
-	  sortedAK8Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK8->begin()));
-	}
-      // get jet indices in decreasing pT order
-      for(std::multimap<double, unsigned>::const_reverse_iterator it = sortedAK8Jets.rbegin(); it != sortedAK8Jets.rend(); ++it)
-        sortedAK8JetIdx.push_back(it->second);
-    }
-  else
-    {
-      for(pat::JetCollection::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
-	{
-	  jecFactorsAK8.push_back(1./ijet->jecFactor(0));
-	  sortedAK8JetIdx.push_back(ijet - jetsAK8->begin());
-	}
-    }
-
-  nJetsAK8_ = 0;
-  float htAK8(0.0);
-  vector<TLorentzVector> vP4AK8;
-  for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
-
-    /*
-      edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
-      double chf = ijet->chargedHadronEnergyFraction();
-      double nhf = ijet->neutralHadronEnergyFraction();// + ijet->HFHadronEnergyFraction();
-      double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      
-      double hf_hf = ijet->HFHadronEnergyFraction();
-      double hf_emf= ijet->HFEMEnergyFraction();
-      
-      int chm    = ijet->chargedHadronMultiplicity();
-      int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
-      float eta  = fabs(ijet->eta());
-      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i);
-      int idL   = (npr>1 && phf<0.99 && nhf<0.99);
-      int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
-      int chHadMult = ijet->chargedHadronMultiplicity();
-      int chMult = ijet->chargedMultiplicity();
-      int neHadMult = ijet->neutralHadronMultiplicity();
-      int neMult = ijet->neutralMultiplicity();
-      int phoMult = ijet->photonMultiplicity();
-    */
-
-    pat::JetCollection::const_iterator ijet = (jetsAK8->begin() + *i);
-    double chf = ijet->chargedHadronEnergyFraction();
-    double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
-    double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    //double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    double muf = ijet->muonEnergyFraction();
-
-    double hf_hf = ijet->HFHadronEnergyFraction();
-    double hf_emf= ijet->HFEMEnergyFraction();
-    double hof    = ijet->hoEnergyFraction();
-
-    int chm    = ijet->chargedHadronMultiplicity();
-      
-    int chMult = ijet->chargedMultiplicity();
-    int neMult = ijet->neutralMultiplicity();
-    int npr    = chMult + neMult;
-
-    int chHadMult = chm; //ijet->chargedHadronMultiplicity();
-    int neHadMult = ijet->neutralHadronMultiplicity();
-    int phoMult = ijet->photonMultiplicity();
-      
-    // Juska's added fractions for identical JetID with recommendations
-    double nemf = ijet->neutralEmEnergyFraction();
-    double cemf = ijet->chargedEmEnergyFraction();
-    int NumConst = npr;
-
-    float eta  = ijet->eta(); // removed fabs() -Juska
-    float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i); // Is this OK? Correct corrected? -Juska
-
-    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
-    int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-    int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
-      
-      
-    if (pt > ptMinAK8_) {
-      htAK8 += pt;
-      nJetsAK8_++;
-
-      vP4AK8.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i)));
-      chfAK8_           ->push_back(chf);
-      nhfAK8_           ->push_back(nhf);
-      phfAK8_           ->push_back(phf);
-      elfAK8_           ->push_back(elf);
-      mufAK8_           ->push_back(muf);
-      nemfAK8_          ->push_back(nemf);
-      cemfAK8_          ->push_back(cemf);
-      hf_hfAK8_         ->push_back(hf_hf);
-      hf_emfAK8_        ->push_back(hf_emf);
-      hofAK8_           ->push_back(hof);
-      jecAK8_           ->push_back(jecFactorsAK8.at(*i));
-      ptAK8_            ->push_back(pt);
-      phiAK8_           ->push_back(ijet->phi());
-      etaAK8_           ->push_back(ijet->eta());
-      massAK8_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK8.at(*i));
-      energyAK8_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i));
-      areaAK8_          ->push_back(ijet->jetArea());
-      csvAK8_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-      pFlavourAK8_      ->push_back(ijet->partonFlavour());
-      hFlavourAK8_      ->push_back(ijet->hadronFlavour());
-      nbHadAK8_         ->push_back(ijet->jetFlavourInfo().getbHadrons().size());
-      ncHadAK8_         ->push_back(ijet->jetFlavourInfo().getcHadrons().size());
-      idLAK8_           ->push_back(idL);
-      idTAK8_           ->push_back(idT);
-      
-      // Disable, causes crash. See the interesting error below. Juska
-      /*
-      Exception Message:
-      Requested UserFloat NjettinessAK8:tau1 is not available! Possible UserFloats are: 
-      ak8PFJetsCHSPrunedMass ak8PFJetsCHSSoftDropMass ak8PFJetsCHSTrimmedMass ak8PFJetsCHSFilteredMass NjettinessAK8:tau1 NjettinessAK8:tau2 NjettinessAK8:tau3 
-      tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
-      tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
-      tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
-      massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
-      massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
-      */
-      
-      chHadMultAK8_     ->push_back(chHadMult);
-      chMultAK8_        ->push_back(chMult);
-      neHadMultAK8_     ->push_back(neHadMult);  
-      neMultAK8_        ->push_back(neMult);
-      phoMultAK8_       ->push_back(phoMult); 
-	
-	
-      //---- match with the pruned jet collection -----
-      // double dRmin(1000);
-      // double auxm(0.0);
-      // for(edm::View<pat::Jet>::const_iterator ijetpr = jetsAK8->begin();ijetpr != jetsAK8->end(); ++ijetpr) { 
-      //   float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-      //   if (dR < dRmin) {
-      //     auxm = ijetpr->mass();
-      //     dRmin = dR;
-      //   } 
-      // } 
-      // massPruned_->push_back(auxm);
-      // dR_->push_back(dRmin);
-	
-    }
-  }// jet loop  
-  htAK8_     = htAK8;
-  if (nJetsAK8_ > 1) { //assuming jets are ordered by pt in the pat collection
-    mjjAK8_    = (vP4AK8[0]+vP4AK8[1]).M();
-    dEtajjAK8_ = fabs((*etaAK8_)[0]-(*etaAK8_)[1]); 
-    dPhijjAK8_ = fabs(deltaPhi((*phiAK8_)[0],(*phiAK8_)[1]));
-  }
-
-    
-  // // CA8
-  // nJetsCA8_ = 0;
-  // float htCA8(0.0);
-  // vector<TLorentzVector> vP4CA8;
-  // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
-  //   double chf = ijet->chargedHadronEnergyFraction();
-  //   double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
-  //   double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-  //   double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-  //   double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-  //   int chm    = ijet->chargedHadronMultiplicity();
-  //   int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
-  //   float eta  = fabs(ijet->eta());
-  //   float pt   = ijet->pt();
-  //   int idL   = (npr>1 && phf<0.99 && nhf<0.99);
-  //   int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
-  //   if (pt > ptMinCA8_) {
-  //     htCA8 += pt;
-  //     nJetsCA8_++;
-	
-  //     vP4CA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-  //     chfCA8_           ->push_back(chf);
-  //     nhfCA8_           ->push_back(nhf);
-  //     phfCA8_           ->push_back(phf);
-  //     elfCA8_           ->push_back(elf);
-  //     mufCA8_           ->push_back(muf);
-  //     jecCA8_           ->push_back(1./ijet->jecFactor(0));
-  //     ptCA8_            ->push_back(pt);
-  //     phiCA8_           ->push_back(ijet->phi());
-  //     etaCA8_           ->push_back(ijet->eta());
-  //     massCA8_          ->push_back(ijet->mass());
-  //     energyCA8_        ->push_back(ijet->energy());
-  // 	idLCA8_           ->push_back(idL);
-  // 	idTCA8_           ->push_back(idT);
-  //     tau1CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau1"));
-  //     tau2CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau2"));
-  //     tau3CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau3"));
-  // 	massPrunedCA8_    ->push_back(ijet->userFloat("ca8PFJetsCHSPrunedLinks"));
-	
-  //   } 
-  // }// jet loop  
-  // htCA8_     = htCA8;
-  // if (nJetsCA8_ > 1) { //assuming jets are ordered by pt in the pat collection
-  //   mjjCA8_    = (vP4CA8[0]+vP4CA8[1]).M();
-  //   dEtajjCA8_ = fabs((*etaCA8_)[0]-(*etaCA8_)[1]); 
-  //   dPhijjCA8_ = fabs(deltaPhi((*phiCA8_)[0],(*phiCA8_)[1]));
-  // }
-  
-    
   //-------------- Gen Jets Info -----------------------------------
 
   if (!iEvent.isRealData()) {
@@ -1469,40 +975,6 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
       }
     }// jet loop  
       
-    //AK8
-    nGenJetsAK8_ = 0;
-    vector<TLorentzVector> vP4GenAK8;      
-    reco::GenJetCollection genJetsAK8 = *handle_genJetsAK8;
-    for(reco::GenJetCollection::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
-      //float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
-      if (pt > ptMinAK8_) {
-	nGenJetsAK8_++;
-	vP4GenAK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-	ptGenAK8_            ->push_back(pt);
-	phiGenAK8_           ->push_back(ijet->phi());
-	etaGenAK8_           ->push_back(ijet->eta());
-	massGenAK8_          ->push_back(ijet->mass());
-	energyGenAK8_        ->push_back(ijet->energy());
-      }
-    }// jet loop  
-      
-    // nGenJetsCA8_ = 0;
-    // vector<TLorentzVector> vP4GenCA8;      
-    // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 		
-    // 	//float eta  = fabs(ijet->eta());
-    // 	float pt   = ijet->pt();
-    // 	if (pt > ptMinCA8_) {
-    // 	  nGenJetsCA8_++;
-    // 	  vP4GenCA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-    // 	  ptGenCA8_            ->push_back(pt);
-    // 	  phiGenCA8_           ->push_back(ijet->phi());
-    // 	  etaGenCA8_           ->push_back(ijet->eta());
-    // 	  massGenCA8_          ->push_back(ijet->mass());
-    // 	  energyGenCA8_        ->push_back(ijet->energy());
-    // 	}
-    // }// jet loop  
-
   }//if MC 
 
   //  }// if vtx
@@ -1604,74 +1076,6 @@ void DijetTreeProducer::initialize()
      emfAK4PFCalo_            ->clear();
 */
   
-  nJetsAK8_          = -999;
-  htAK8_             = -999;
-  mjjAK8_            = -999; 
-  dEtajjAK8_         = -999; 
-  dPhijjAK8_         = -999;
-  ptAK8_             ->clear();
-  etaAK8_            ->clear();
-  phiAK8_            ->clear();
-  massAK8_           ->clear();
-  energyAK8_         ->clear();
-  areaAK8_           ->clear();
-  csvAK8_            ->clear();
-  pFlavourAK8_       ->clear();
-  hFlavourAK8_       ->clear();
-  nbHadAK8_          ->clear();
-  ncHadAK8_          ->clear();
-  chfAK8_            ->clear();
-  nhfAK8_            ->clear();
-  phfAK8_            ->clear();
-  elfAK8_            ->clear();
-  mufAK8_            ->clear();
-  nemfAK8_           ->clear();
-  cemfAK8_           ->clear();
-  hf_hfAK8_          ->clear();
-  hf_emfAK8_         ->clear();
-  hofAK8_            ->clear();
-  jecAK8_            ->clear();
-  jecAK8_            ->clear();
-  idLAK8_            ->clear();
-  idTAK8_            ->clear();
-  massPrunedAK8_     ->clear();
-  massSoftDropAK8_   ->clear();
-  tau1AK8_           ->clear();
-  tau2AK8_           ->clear();
-  tau3AK8_           ->clear();
-  // Juska's fix
-  chHadMultAK8_     ->clear();
-  chMultAK8_        ->clear();
-  neHadMultAK8_     ->clear();
-  neMultAK8_        ->clear();
-  phoMultAK8_        ->clear();
-  //dRAK8_             ->clear();
-  
-  
-  // nJetsCA8_          = -999;
-  // htCA8_             = -999;
-  // mjjCA8_            = -999; 
-  // dEtajjCA8_         = -999; 
-  // dPhijjCA8_         = -999;
-  // ptCA8_             ->clear();
-  // etaCA8_            ->clear();
-  // phiCA8_            ->clear();
-  // massCA8_           ->clear();
-  // energyCA8_         ->clear();
-  // chfCA8_            ->clear();
-  // nhfCA8_            ->clear();
-  // phfCA8_            ->clear();
-  // elfCA8_            ->clear();
-  // mufCA8_            ->clear();
-  // jecCA8_            ->clear();
-  // jecCA8_            ->clear();
-  // idLCA8_            ->clear();
-  // idTCA8_            ->clear();
-  // massPrunedCA8_     ->clear();
-  // tau1CA8_           ->clear();
-  // tau2CA8_           ->clear();
-  // //dRCA8_             ->clear();
-  
   
   triggerResult_     ->clear();
   
@@ -1694,24 +1098,13 @@ passFilterBadPFMuon_             = false;
   weight_ = -999;
 
   nGenJetsAK4_ = -999;
-  nGenJetsAK8_ = -999;
   
   ptGenAK4_    ->clear();
   phiGenAK4_   ->clear();
   etaGenAK4_   ->clear();
   massGenAK4_  ->clear();
   energyGenAK4_->clear();
-  ptGenAK8_    ->clear();
-  phiGenAK8_   ->clear();
-  etaGenAK8_   ->clear();
-  massGenAK8_  ->clear();
-  energyGenAK8_->clear();
-  // ptGenCA8_    ->clear();
-  // phiGenCA8_   ->clear();
-  // etaGenCA8_   ->clear();
-  // massGenCA8_  ->clear();
-  // energyGenCA8_->clear();
-  
+
   gen_eta		->clear();
   gen_phi		->clear();
   gen_p		        ->clear();
