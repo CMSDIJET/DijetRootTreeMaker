@@ -823,7 +823,7 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
       energyAK4_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i));
       areaAK4_          ->push_back(ijet->jetArea());
       csvAK4_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-      deepcsvAK4_       ->push_back(ijet->bDiscriminator("pfDeepCSVJetTags:probb"));
+      deepcsvAK4_       ->push_back(ijet->bDiscriminator("pfDeepCSVJetTags:probb")+ijet->bDiscriminator("pfDeepCSVJetTags:probbb"));
       pFlavourAK4_      ->push_back(ijet->partonFlavour());
       hFlavourAK4_      ->push_back(ijet->hadronFlavour());
       nbHadAK4_         ->push_back(ijet->jetFlavourInfo().getbHadrons().size());
