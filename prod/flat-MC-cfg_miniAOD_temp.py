@@ -24,7 +24,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 5000
 
 process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string(THISROOTFILE),
-                                 fileName=cms.string('RSGraviton_Tyler.root'),
+                                 fileName=cms.string('TROOTFILE.root'),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -73,32 +73,18 @@ process.out.outputCommands.append("keep *_slimmedGenJets_*_*")
 ##-------------------- Define the source  ----------------------------
 
 
-readFiles = cms.untracked.vstring()
-secFiles = cms.untracked.vstring()
-process.source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
-readFiles.extend( [
-File111
-] );
 
-readFiles.extend( [
-File222
-] );
-
-
-secFiles.extend( [
-File333
-               ] )
-
-#process.source = cms.Source("PoolSource",
+process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
     #fileNames = cms.untracked.vstring('/store/mc/RunIISpring15DR74/QstarToJJ_M_1000_TuneCUETP8M1_13TeV_pythia8/AODSIM/Asympt50ns_MCRUN2_74_V9A-v1/50000/00F85752-BCFB-E411-A29A-000F5327349C.root')
     #fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/mc/RunIISpring15DR74/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/50000/0E4CEBFE-ECFB-E411-9F0C-842B2B29273C.root')
-#    fileNames = cms.untracked.vstring(
+    fileNames = cms.untracked.vstring(
+'file:/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/deguio/BstarToJJ/7000/submit_20180615_193401/step3_194.root'
 #'/store/mc/RunIISummer17MiniAOD/QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/MINIAODSIM/92X_upgrade2017_realistic_v10-v2/00000/00569FE4-53AC-E711-B286-02163E014B86.root'
-#)
+)
 #    fileNames = cms.untracked.vstring('/store/mc/RunIIFall17MiniAOD/QCD_Pt_800to1000_TuneCP5_13TeV_pythia8/MINIAODSIM/94X_mc2017_realistic_v11_ext1-v1/70000/041AA818-0820-E811-8B46-02163E01A0A4.root')
 
- #   )
+   )
 
 
 
