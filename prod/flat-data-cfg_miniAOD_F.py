@@ -73,8 +73,6 @@ process.out.outputCommands.append("keep *_slimmedGenJets_*_*")
 
 ##-------------------- Define the source  ----------------------------
 
-
-
 # Note: for grid running it does not matter what's here, as input data is
 # handled separately there.
 
@@ -83,7 +81,8 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/730/00000/EA345ED4-B821-E611-BEA5-02163E0138E2.root")
     fileNames = cms.untracked.vstring(
-"/store/data/Run2017B/JetHT/MINIAOD/17Nov2017-v1/20000/0016BE6B-FACC-E711-88D8-B499BAAC0068.root"
+'/store/data/Run2017B/JetHT/MINIAOD/31Mar2018-v1/50000/F0E83670-3443-E811-A4D3-0CC47A7C3458.root'
+#'file:/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/TylerW/94D34349-2AD4-E711-9977-001E67DDC24A.root'
 #"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FCF0D2A4-DCDE-E711-9612-02163E01A5B6.root",
 #"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE1B80E8-49E0-E711-A6CD-02163E014637.root",
 #"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE551C87-8FDF-E711-8DAC-002590200A80.root"
@@ -99,6 +98,25 @@ calo_collection=''
 cluster_collection=''
 pfcalo_collection=''
    
+from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+
+updateJetCollection(
+   process,
+   jetSource = cms.InputTag('slimmedJets'),
+   pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
+   svSource = cms.InputTag('slimmedSecondaryVertices'),
+   jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+   btagDiscriminators = [
+      'pfDeepFlavourJetTags:probb',
+      'pfDeepFlavourJetTags:probbb',
+      'pfDeepFlavourJetTags:problepb',
+      'pfDeepFlavourJetTags:probc',
+      'pfDeepFlavourJetTags:probuds',
+      'pfDeepFlavourJetTags:probg'
+      ],
+   postfix='NewDFTraining'
+)
+
 
 process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 

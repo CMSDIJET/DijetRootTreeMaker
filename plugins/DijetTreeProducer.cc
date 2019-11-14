@@ -222,6 +222,7 @@ void DijetTreeProducer::beginJob()
   areaAK4_           = new std::vector<float>;
   csvAK4_            = new std::vector<float>;
   deepcsvAK4_        = new std::vector<float>;
+  deepjetAK4_	     = new std::vector<float>;
   pFlavourAK4_       = new std::vector<int>;
   hFlavourAK4_       = new std::vector<int>;
   nbHadAK4_          = new std::vector<int>;
@@ -297,6 +298,7 @@ process.BadChargedCandidateFilter *std::vector<float>;
   outTree_->Branch("jetAreaAK4"              ,"vector<float>"     ,&areaAK4_);
   outTree_->Branch("jetCSVAK4"               ,"vector<float>"     ,&csvAK4_);
   outTree_->Branch("jetDeepCSVAK4"           ,"vector<float>"     ,&deepcsvAK4_);
+  outTree_->Branch("jetDeepJetAK4"           ,"vector<float>"     ,&deepjetAK4_);
   outTree_->Branch("pFlavourAK4"             ,"vector<int>"       ,&pFlavourAK4_);
   outTree_->Branch("hFlavourAK4"             ,"vector<int>"       ,&hFlavourAK4_);
   outTree_->Branch("nbHadAK4"                ,"vector<int>"       ,&nbHadAK4_);
@@ -438,6 +440,7 @@ void DijetTreeProducer::endJob()
   delete areaAK4_;
   delete csvAK4_;
   delete deepcsvAK4_;
+  delete deepjetAK4_;
   delete pFlavourAK4_;
   delete hFlavourAK4_;
   delete nbHadAK4_;
@@ -796,7 +799,7 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
 
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
     int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-    int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
+    int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.80) || fabs(eta)>2.4);
 
        
       
@@ -824,6 +827,8 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
       areaAK4_          ->push_back(ijet->jetArea());
       csvAK4_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       deepcsvAK4_       ->push_back(ijet->bDiscriminator("pfDeepCSVJetTags:probb")+ijet->bDiscriminator("pfDeepCSVJetTags:probbb"));
+      deepjetAK4_	->push_back(ijet->bDiscriminator("pfDeepFlavourJetTags:probb")+ijet->bDiscriminator("pfDeepFlavourJetTags:probbb")+ijet->bDiscriminator("pfDeepFlavourJetTags:problepb"));
+	cout<<ijet->bDiscriminator("pfDeepFlavourJetTags:probb")<<endl<<ijet->bDiscriminator("pfDeepFlavourJetTags:probbb")<<endl<<ijet->bDiscriminator("pfDeepFlavourJetTags:problepb")<<endl<<endl;
       pFlavourAK4_      ->push_back(ijet->partonFlavour());
       hFlavourAK4_      ->push_back(ijet->hadronFlavour());
       nbHadAK4_         ->push_back(ijet->jetFlavourInfo().getbHadrons().size());
@@ -1016,6 +1021,7 @@ void DijetTreeProducer::initialize()
   areaAK4_           ->clear();
   csvAK4_            ->clear();
   deepcsvAK4_	     ->clear();
+  deepjetAK4_	     ->clear();
   pFlavourAK4_       ->clear();
   hFlavourAK4_       ->clear();
   nbHadAK4_          ->clear();

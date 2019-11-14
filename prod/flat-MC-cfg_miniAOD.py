@@ -75,19 +75,20 @@ process.out.outputCommands.append("keep *_slimmedGenJets_*_*")
 
 readFiles = cms.untracked.vstring()
 secFiles = cms.untracked.vstring()
-process.source = cms.Source ("PoolSource",fileNames = readFiles, secondaryFileNames = secFiles)
 readFiles.extend( [
-File111
 ] );
 
 readFiles.extend( [
-File222
 ] );
 
 
 secFiles.extend( [
-File333
                ] )
+
+process.source = cms.Source("PoolSource",
+    fileNames = cms.untracked.vstring(
+    )
+)
 
 #process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    

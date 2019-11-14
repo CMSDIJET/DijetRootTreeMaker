@@ -67,6 +67,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     bool isData_;
     
     // Migrate to consumes-system for running in 80X
+    edm::EDGetTokenT<edm::View<reco::Candidate> > srcToken_;
     edm::EDGetTokenT<pat::JetCollection> srcJets_; 
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK4_;
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK8_;
@@ -106,10 +107,10 @@ class DijetTreeProducer : public edm::EDAnalyzer
     triggerExpression::Evaluator * ECALDeadCellNoiseFilter_Selector_;
     triggerExpression::Evaluator * GoodVtxNoiseFilter_Selector_;
     triggerExpression::Evaluator * EEBadScNoiseFilter_Selector_;
-   triggerExpression::Evaluator * BeamHaloFilter_Selector_;
+    triggerExpression::Evaluator * BeamHaloFilter_Selector_;
     triggerExpression::Evaluator * HBHENoiseIsoFilter_Selector_;
-triggerExpression::Evaluator * BadChargedCandidateFilter_Selector_;
-triggerExpression::Evaluator * BadPFMuonFilter_Selector_;
+    triggerExpression::Evaluator * BadChargedCandidateFilter_Selector_;
+    triggerExpression::Evaluator * BadPFMuonFilter_Selector_;
 
     bool passFilterHBHE_;
 bool passFilterglobalSuperTightHalo2016_;
@@ -122,7 +123,7 @@ bool passFilterBadPFMuon_;
 
 
     //---- jet and genJet variables --------------
-    std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*deepcsvAK4_,*csvAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_,*nemfAK4_,*cemfAK4_;
+    std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*deepjetAK4_,*deepcsvAK4_,*csvAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_,*nemfAK4_,*cemfAK4_;
     std::vector<int> *idLAK4_,*idTAK4_, *chHadMultAK4_, *chMultAK4_, *neHadMultAK4_, *neMultAK4_, *phoMultAK4_,*pFlavourAK4_,*hFlavourAK4_,*nbHadAK4_,*ncHadAK4_,*pFlavourAK8_,*hFlavourAK8_,*nbHadAK8_,*ncHadAK8_;
     std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
     //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;

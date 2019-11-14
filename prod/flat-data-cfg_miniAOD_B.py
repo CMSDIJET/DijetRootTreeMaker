@@ -83,7 +83,7 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/730/00000/EA345ED4-B821-E611-BEA5-02163E0138E2.root")
     fileNames = cms.untracked.vstring(
-"/store/data/Run2016C/JetHT/MINIAOD/23Sep2016-v1/90000/A2C87370-3886-E611-9B4E-003048FFD7AA.root"
+'/store/data/Run2017B/JetHT/MINIAOD/31Mar2018-v1/50000/762453AC-2943-E811-8E96-0025905B85B8.root'
 #"/store/data/Run2017B/JetHT/MINIAOD/17Nov2017-v1/20000/0016BE6B-FACC-E711-88D8-B499BAAC0068.root"
 #"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FCF0D2A4-DCDE-E711-9612-02163E01A5B6.root",
 #"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE1B80E8-49E0-E711-A6CD-02163E014637.root",
@@ -93,6 +93,25 @@ process.source = cms.Source("PoolSource",
 )
 
 ##-------------------- User analyzer  --------------------------------
+
+from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+
+updateJetCollection(
+   process,
+   jetSource = cms.InputTag('slimmedJets'),
+   pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
+   svSource = cms.InputTag('slimmedSecondaryVertices'),
+   jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'None'),
+   btagDiscriminators = [
+      'pfDeepFlavourJetTags:probb',
+      'pfDeepFlavourJetTags:probbb',
+      'pfDeepFlavourJetTags:problepb',
+      'pfDeepFlavourJetTags:probc',
+      'pfDeepFlavourJetTags:probuds',
+      'pfDeepFlavourJetTags:probg'
+      ],
+   postfix='NewDFTraining'
+)
 
 
 # Residue from AOD and RECO running
@@ -128,7 +147,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ##### For 0T data  #####
   #triggerAlias     = cms.vstring('L1Jet68','L1Jet36','L1Jet16','L1EG20','L1EG5'),
   ##### For JetHT PD ##### 
-  triggerAlias     = cms.vstring('PFHT780','PFHT890','PFHT1050',
+  triggerAlias     = cms.vstring('PFHT780','PFHT890','PFHT1050','PFJET200',
                                  'PFJET400','PFJET450','PFJET500','PFJET550',
                                  'Mu50',
 		                 'CaloJet500NoJetID','CaloJet550NoJetID',                               'HLT_PFHT500_PFMET100_PFMHT100_IDTight','HLT_PFHT500_PFMET110_PFMHT110_IDTight','HLT_PFHT700_PFMET85_PFMHT85_IDTight','HLT_PFHT700_PFMET95_PFMHT95_IDTight',
