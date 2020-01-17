@@ -56,7 +56,7 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   */
   
   // Migrate to Consumes-system. Skip Calo-stuff
-  
+  srcJets_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jets"))); 
   srcJetsAK4_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jetsAK4")));
   
   srcRho_             = (consumes<double>(cfg.getParameter<edm::InputTag>             ("rho")));
@@ -221,6 +221,8 @@ void DijetTreeProducer::beginJob()
   energyAK4_         = new std::vector<float>;
   areaAK4_           = new std::vector<float>;
   csvAK4_            = new std::vector<float>;
+  deepcsvAK4_	     = new std::vector<float>;
+  deepjetAK4_        = new std::vector<float>;
   pFlavourAK4_       = new std::vector<int>;
   hFlavourAK4_       = new std::vector<int>;
   nbHadAK4_          = new std::vector<int>;
@@ -295,6 +297,8 @@ process.BadChargedCandidateFilter *std::vector<float>;
   outTree_->Branch("jetEnergyAK4"            ,"vector<float>"     ,&energyAK4_);
   outTree_->Branch("jetAreaAK4"              ,"vector<float>"     ,&areaAK4_);
   outTree_->Branch("jetCSVAK4"               ,"vector<float>"     ,&csvAK4_);
+  outTree_->Branch("jetDeepCSVAK4"           ,"vector<float>"     ,&deepcsvAK4_);
+  outTree_->Branch("jetDeepJetAK4"           ,"vector<float>"     ,&deepjetAK4_);
   outTree_->Branch("pFlavourAK4"             ,"vector<int>"       ,&pFlavourAK4_);
   outTree_->Branch("hFlavourAK4"             ,"vector<int>"       ,&hFlavourAK4_);
   outTree_->Branch("nbHadAK4"                ,"vector<int>"       ,&nbHadAK4_);
@@ -435,6 +439,8 @@ void DijetTreeProducer::endJob()
   delete energyAK4_;
   delete areaAK4_;
   delete csvAK4_;
+  delete deepcsvAK4_;
+  delete deepjetAK4_;
   delete pFlavourAK4_;
   delete hFlavourAK4_;
   delete nbHadAK4_;
@@ -519,6 +525,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   //edm::Handle<edm::View<pat::Jet> > jetsAK4;
   Handle<pat::JetCollection> jetsAK4;
   iEvent.getByToken(srcJetsAK4_,jetsAK4);
+
+  Handle<pat::JetCollection> jets;
+  iEvent.getByToken(srcJets_,jets);
 
   //edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK4;
   Handle<reco::GenJetCollection> handle_genJetsAK4;
@@ -723,7 +732,7 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
       // sort AK4 jets by increasing pT
       std::multimap<double, unsigned> sortedAK4Jets;
       //for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
-      for(pat::JetCollection::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
+      for(pat::JetCollection::const_iterator ijet = jets->begin();ijet != jets->end(); ++ijet)
 	{
 	  double correction = 1.;
 	  JetCorrectorAK4_DATA->setJetEta(ijet->eta());
@@ -741,7 +750,7 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
 
 
 	  jecFactorsAK4.push_back(correction);
-	  sortedAK4Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK4->begin()));
+	  sortedAK4Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jets->begin()));
 	}
       // get jet indices in decreasing pT order
       for(std::multimap<double, unsigned>::const_reverse_iterator it = sortedAK4Jets.rbegin(); it != sortedAK4Jets.rend(); ++it)
@@ -749,10 +758,10 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
     }
   else
     {
-      for(pat::JetCollection::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
+      for(pat::JetCollection::const_iterator ijet = jets->begin();ijet != jets->end(); ++ijet)
 	{
 	  jecFactorsAK4.push_back(1./ijet->jecFactor(0));
-	  sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
+	  sortedAK4JetIdx.push_back(ijet - jets->begin());
 	}
     }
 
@@ -761,7 +770,7 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
   vector<TLorentzVector> vP4AK4;
   for(std::vector<unsigned>::const_iterator i = sortedAK4JetIdx.begin(); i != sortedAK4JetIdx.end(); ++i) {
 
-    pat::JetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
+    pat::JetCollection::const_iterator ijet = (jets->begin() + *i);
     double chf = ijet->chargedHadronEnergyFraction();
     double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
     double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
@@ -792,7 +801,7 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
     float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i); // Is this OK? Correct corrected? -Juska
 
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
-    int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
+    int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.9) || fabs(eta)>2.4);
     int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
 
        
@@ -820,6 +829,8 @@ passFilterBadPFMuon_ = (*BadPFMuonFilter_Selector_)(noiseFilterCache_);
       energyAK4_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i));
       areaAK4_          ->push_back(ijet->jetArea());
       csvAK4_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+      deepcsvAK4_       ->push_back(ijet->bDiscriminator("pfDeepCSVJetTags:probb")+ijet->bDiscriminator("pfDeepCSVJetTags:probbb"));
+      deepjetAK4_       ->push_back(ijet->bDiscriminator("pfDeepFlavourJetTags:probb")+ijet->bDiscriminator("pfDeepFlavourJetTags:problepb")+ijet->bDiscriminator("pfDeepFlavourJetTags:probbb"));
       pFlavourAK4_      ->push_back(ijet->partonFlavour());
       hFlavourAK4_      ->push_back(ijet->hadronFlavour());
       nbHadAK4_         ->push_back(ijet->jetFlavourInfo().getbHadrons().size());
@@ -1011,6 +1022,8 @@ void DijetTreeProducer::initialize()
   energyAK4_         ->clear();
   areaAK4_           ->clear();
   csvAK4_            ->clear();
+  deepcsvAK4_        ->clear();
+  deepjetAK4_        ->clear();
   pFlavourAK4_       ->clear();
   hFlavourAK4_       ->clear();
   nbHadAK4_          ->clear();

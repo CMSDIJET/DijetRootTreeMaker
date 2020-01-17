@@ -11,12 +11,12 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '94X_dataRun2_ReReco17_forValidation'
+process.GlobalTag.globaltag = '80X_dataRun2_2016SeptRepro_v7'
 #process.GlobalTag.globaltag = THISGLOBALTAG
 
 #--------------------- Report and output ---------------------------
 # Note: in grid runs this parameter is not used.
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(1000))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(2000))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
@@ -49,7 +49,40 @@ process.out = cms.OutputModule('PoolOutputModule',
 process.chs = cms.EDFilter('CandPtrSelector', src = cms.InputTag('packedPFCandidates'), cut = cms.string('vertexRef().isNonnull() && fromPV'))
 
 from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
-
+from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+bTagDiscriminators = [
+         'softPFMuonBJetTags',
+         'softPFElectronBJetTags',
+         'pfJetBProbabilityBJetTags',
+         'pfJetProbabilityBJetTags',
+         'pfCombinedInclusiveSecondaryVertexV2BJetTags',
+         'pfDeepCSVJetTags:probudsg',
+         'pfDeepCSVJetTags:probb',
+         'pfDeepCSVJetTags:probc',
+         'pfDeepCSVJetTags:probbb',
+         'pfDeepCSVJetTags:probcc',
+         'pfCombinedMVAV2BJetTags',
+     ]
+bTagInfos = [
+        'pfImpactParameterTagInfos',
+        'pfInclusiveSecondaryVertexFinderTagInfos',
+        'pfDeepCSVTagInfos',
+     ]
+jetCorrectionsAK4 = ('AK4PFchs', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+updateJetCollection(
+        process,
+        labelName = "DeepFlavour",
+        jetSource = cms.InputTag('slimmedJets'),  # 'ak4Jets'
+        jetCorrections = jetCorrectionsAK4,
+        pfCandidates = cms.InputTag('packedPFCandidates'),
+        pvSource = cms.InputTag("offlineSlimmedPrimaryVertices"),
+        svSource = cms.InputTag('slimmedSecondaryVertices'),
+        muSource = cms.InputTag('slimmedMuons'),
+        elSource = cms.InputTag('slimmedElectrons'),
+        btagInfos = bTagInfos,
+        btagDiscriminators = bTagDiscriminators,
+        explicitJTA = False
+)
 
 #-------------------------------------------------------
 # Gen Particles Pruner
@@ -82,9 +115,10 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring("root://eoscms//eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
     #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/730/00000/EA345ED4-B821-E611-BEA5-02163E0138E2.root")
-    fileNames = cms.untracked.vstring("file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FCF0D2A4-DCDE-E711-9612-02163E01A5B6.root",
-"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE1B80E8-49E0-E711-A6CD-02163E014637.root",
-"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE551C87-8FDF-E711-8DAC-002590200A80.root")
+    fileNames = cms.untracked.vstring(
+#'/store/data/Run2016B/JetHT/MINIAOD/03Feb2017_ver1-v1/80000/F8F61751-A5EC-E611-92B0-02163E019D1E.root'
+'/store/data/Run2016C/JetHT/MINIAOD/18Apr2017-v1/120000/2095D843-8236-E711-A8F9-0CC47A78A478.root'
+)
     
 )
 
@@ -103,6 +137,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   isData          = cms.bool(True),
 
   ## JETS/MET ########################################
+  jets		   = cms.InputTag('selectedUpdatedPatJetsDeepFlavour'),
   jetsAK4             = cms.InputTag('slimmedJets'), 
   #jetsAK8             = cms.InputTag('slimmedJetsAK8'),     
   rho              = cms.InputTag('fixedGridRhoFastjetAll'),
@@ -198,10 +233,10 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ## Version Summer15_25nsV3 ( https://hypernews.cern.ch/HyperNews/CMS/get/JetMET/ )
   # Note that it hardly matters what is put in here, as these should be overriden in analysis step anyway. Juska.
   # That's also why these JEC's are greatly dated.
-  L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK4PFchs.txt'),
-  L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK4PFchs.txt'),
-  L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK4PFchs.txt'),
-  ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
+  L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L1FastJet_AK4PFchs.txt'),
+  L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2Relative_AK4PFchs.txt'),
+  L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L3Absolute_AK4PFchs.txt'),
+  ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer16_23Sep2016BCDV4_DATA/Summer16_23Sep2016BCDV4_DATA_L2L3Residual_AK4PFchs.txt'),
   L1corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L1FastJet_AK4PFchs.txt'),
   L2corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L2Relative_AK4PFchs.txt'),
   L3corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK4PFchs.txt'),
@@ -213,7 +248,24 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 # ------------------ path --------------------------
 
-
 process.p = cms.Path()
-process.p +=                      process.chs
-process.p +=                      process.dijets
+#process.p += process.patJetCorrFactorsDeepFlavour*
+process.p += process.updatedPatJetsDeepFlavour
+#process.p += process.patJetCorrFactorsTransientCorrectedDeepFlavour*
+#process.p += rocess.softPFMuonsTagInfosDeepFlavour*
+#process.p += process.softPFMuonBJetTagsDeepFlavour*
+#process.p += process.softPFElectronsTagInfosDeepFlavour*
+#process.p += process.softPFElectronBJetTagsDeepFlavour*
+#process.p += process.pfImpactParameterTagInfosDeepFlavour*
+#process.p += process.pfJetBProbabilityBJetTagsDeepFlavour*
+#process.p += process.pfJetProbabilityBJetTagsDeepFlavour*
+#process.p += process.pfInclusiveSecondaryVertexFinderTagInfosDeepFlavour*
+#process.p += process.pfCombinedInclusiveSecondaryVertexV2BJetTagsDeepFlavour*
+#process.p += process.pfDeepCSVTagInfosDeepFlavour*
+#process.p += process.pfDeepCSVJetTagsDeepFlavour*
+#process.p += process.pfSecondaryVertexTagInfosDeepFlavour*
+#process.p += process.pfCombinedMVAV2BJetTagsDeepFlavour*
+#process.p += process.updatedPatJetsTransientCorrectedDeepFlavour*
+#process.p += process.selectedUpdatedPatJetsDeepFlavour*
+process.p += process.chs
+process.p += process.dijets
