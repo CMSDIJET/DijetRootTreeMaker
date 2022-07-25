@@ -41,7 +41,6 @@ class DijetTreeProducer : public edm::EDAnalyzer
     void initialize();
     // For JECs
     bool redoJECs_;
-    //edm::FileInPath L1corrAK4_, L2corrAK4_, L3corrAK4_, ResCorrAK4_, L1corrAK8_, L2corrAK8_, L3corrAK8_, ResCorrAK8_;
     edm::FileInPath L1corrAK4_DATA_, L2corrAK4_DATA_, L3corrAK4_DATA_, ResCorrAK4_DATA_, L1corrAK8_DATA_, L2corrAK8_DATA_, L3corrAK8_DATA_, ResCorrAK8_DATA_;
     edm::FileInPath L1corrAK4_MC_, L2corrAK4_MC_, L3corrAK4_MC_, L1corrAK8_MC_, L2corrAK8_MC_, L3corrAK8_MC_;
     JetCorrectorParameters *L1ParAK4_DATA;
@@ -80,15 +79,14 @@ class DijetTreeProducer : public edm::EDAnalyzer
     edm::EDGetTokenT<reco::GenParticleCollection> srcPrunedGenParticles_;
     
     edm::EDGetTokenT<std::vector<PileupSummaryInfo> > srcPU_;
+    edm::EDGetTokenT<edm::TriggerResults> srcTriggerResultsTag_;
     edm::EDGetTokenT<GenEventInfoProduct> srcGenInfo_;
 
     edm::Service<TFileService> fs_;
     TTree *outTree_;
 
     //---- TRIGGER -------------------------
-    triggerExpression::Data triggerCache_;
-    std::vector<triggerExpression::Evaluator*> vtriggerSelector_;
-    std::vector<std::string> vtriggerAlias_,vtriggerSelection_;
+    std::vector<std::string> vtriggerSelection_;
     TH1F *triggerPassHisto_,*triggerNamesHisto_,*puHisto_;
     //---- output TREE variables ------
     //---- global event variables -----
@@ -97,8 +95,8 @@ class DijetTreeProducer : public edm::EDAnalyzer
     float rho_,met_,metSig_;
     float htAK4_,mjjAK4_,dEtajjAK4_,dPhijjAK4_;
     float htAK8_,mjjAK8_,dEtajjAK8_,dPhijjAK8_;
-//    float htCA8_,mjjCA8_,dEtajjCA8_,dPhijjCA8_;
     std::vector<bool> *triggerResult_;
+    std::vector<std::string> *triggerName_;
 
     //---- NOISE FILTERS -------------------------
     triggerExpression::Data noiseFilterCache_;
@@ -106,60 +104,35 @@ class DijetTreeProducer : public edm::EDAnalyzer
     triggerExpression::Evaluator * ECALDeadCellNoiseFilter_Selector_;
     triggerExpression::Evaluator * GoodVtxNoiseFilter_Selector_;
     triggerExpression::Evaluator * EEBadScNoiseFilter_Selector_;
-   triggerExpression::Evaluator * BeamHaloFilter_Selector_;
+    triggerExpression::Evaluator * BeamHaloFilter_Selector_;
     triggerExpression::Evaluator * HBHENoiseIsoFilter_Selector_;
-triggerExpression::Evaluator * BadChargedCandidateFilter_Selector_;
-triggerExpression::Evaluator * BadPFMuonFilter_Selector_;
-    //triggerExpression::Evaluator * ECALlaserNoiseFilter_Selector_;
-    //triggerExpression::Evaluator * TrkPOGNoiseFilter_Selector_;
-    //triggerExpression::Evaluator * TrkPOG_manystrip_NoiseFilter_Selector_;
-    //triggerExpression::Evaluator * TrkPOG_toomanystrip_NoiseFilter_Selector_;
-    //triggerExpression::Evaluator * TrkPOG_logError_NoiseFilter_Selector_;
- //triggerExpression::Evaluator * CSCHaloNoiseFilter_Selector_;
-    //triggerExpression::Evaluator * HCALlaserNoiseFilter_Selector_;
-//triggerExpression::Evaluator * TrkFailureNoiseFilter_Selector_;
+    triggerExpression::Evaluator * BadChargedCandidateFilter_Selector_;
+    triggerExpression::Evaluator * BadPFMuonFilter_Selector_;
 
     bool passFilterHBHE_;
-bool passFilterglobalSuperTightHalo2016_;
- bool  passFilterHBHEIso_;
-   bool passFilterECALDeadCell_;
+    bool passFilterglobalSuperTightHalo2016_;
+    bool  passFilterHBHEIso_;
+    bool passFilterECALDeadCell_;
     bool passFilterGoodVtx_;
     bool passFilterEEBadSc_;
-bool passFilterBadChargedCandidate_;
-bool passFilterBadPFMuon_;
+    bool passFilterBadChargedCandidate_;
+    bool passFilterBadPFMuon_;
 
-    //bool passFilterECALlaser_;
-    //bool passFilterTrkPOG_;
-   //// bool passFilterTrkPOG_manystrip_;
-    //bool passFilterTrkPOG_toomanystrip_;
-    //bool passFilterTrkPOG_logError_;
-//bool passFilterCSCHalo_;
-    //bool passFilterHCALlaser_;
-//bool passFilterTrkFailure_;
 
     //---- jet and genJet variables --------------
     std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*csvAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_,*nemfAK4_,*cemfAK4_;
     std::vector<int> *idLAK4_,*idTAK4_, *chHadMultAK4_, *chMultAK4_, *neHadMultAK4_, *neMultAK4_, *phoMultAK4_,*pFlavourAK4_,*hFlavourAK4_,*nbHadAK4_,*ncHadAK4_,*pFlavourAK8_,*hFlavourAK8_,*nbHadAK8_,*ncHadAK8_;
     std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
-    //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
     std::vector<float> *ptGenAK4_,*etaGenAK4_,*phiGenAK4_,*massGenAK4_,*energyGenAK4_, *energy_pfAK4_;
     
     std::vector<float> *ptAK4matchCaloJet_,*emfAK4matchCaloJet_;
-//    std::vector<float> *ptAK4Calo_,*jecAK4Calo_,*etaAK4Calo_,*phiAK4Calo_,*massAK4Calo_,*energyAK4Calo_,*areaAK4Calo_,*emfAK4Calo_;
-//    std::vector<float> *ptAK4PFCluster_,*jecAK4PFCluster_,*etaAK4PFCluster_,*phiAK4PFCluster_,*massAK4PFCluster_,*energyAK4PFCluster_,*areaAK4PFCluster_;
-//    std::vector<float> *ptAK4PFCalo_,*jecAK4PFCalo_,*etaAK4PFCalo_,*phiAK4PFCalo_,*massAK4PFCalo_,*energyAK4PFCalo_,*areaAK4PFCalo_,*emfAK4PFCalo_;
 
     std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*csvAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_,*nemfAK8_,*cemfAK8_, *massPrunedAK8_, *massSoftDropAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
-//    std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_, *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
-     std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_;
-     std::vector<float> *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
+    std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_;
+    std::vector<float> *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
 
     std::vector<float> *hf_hfAK8_, *hf_emfAK8_, *hofAK8_;
     std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;
-
-//    std::vector<float> *ptCA8_,*jecCA8_,*etaCA8_,*phiCA8_,*massCA8_,*energyCA8_,*chfCA8_,*nhfCA8_,*phfCA8_,*elfCA8_,*mufCA8_, *massPrunedCA8_, *dR_CA8_,*tau1CA8_,*tau2CA8_, *tau3CA8_ ;
-//    std::vector<int> *idLCA8_,*idTCA8_;
-//    std::vector<float> *ptGenCA8_,*etaGenCA8_,*phiGenCA8_,*massGenCA8_,*energyGenCA8_;
 
     //---- MC variables ---------------
     std::vector<float> *npu_; 
