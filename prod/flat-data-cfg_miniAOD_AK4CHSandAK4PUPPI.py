@@ -78,34 +78,11 @@ process.out.outputCommands.append("keep *_slimmedGenJets_*_*")
 # handled separately there.
 
 process.source = cms.Source("PoolSource",
-    #fileNames = cms.untracked.vstring("root://eoscms//eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
-    #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/411/00000/10CB3C59-721B-E611-AFB4-02163E012711.root")
-    #fileNames = cms.untracked.vstring("file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/730/00000/EA345ED4-B821-E611-BEA5-02163E0138E2.root")
-    #fileNames = cms.untracked.vstring("file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FCF0D2A4-DCDE-E711-9612-02163E01A5B6.root",
-#"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE1B80E8-49E0-E711-A6CD-02163E014637.root",
-#"file:/eos/cms/store/data/Run2017F/JetHT/MINIAOD/17Nov2017-v1/50000/FE551C87-8FDF-E711-8DAC-002590200A80.root")
     #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2016C/JetHT/MINIAOD/21Feb2020_UL2016_HIPM-v1/10000/02FDF8E4-8CB6-064E-A645-3C8BE2805899.root')
     fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2018A/JetHT/MINIAOD/12Nov2019_UL2018-v2/100000/006D4A04-6DF4-7941-B54F-12CEF66AEE20.root')   
 )
 
 ##-------------------- User analyzer  --------------------------------
-
-#from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
-#process.ak4PuppiJets  = ak4PFJets.clone (src = 'puppi', doAreaFastjet = True, jetPtMin = 2.)
-#from PhysicsTools.PatAlgos.tools.jetTools import addJetCollection 
-#addJetCollection(process,labelName = 'Puppi', jetSource = cms.InputTag('ak4PuppiJets'), algo = 'AK', rParam=0.4, genJetCollection=cms.InputTag('slimmedGenJets'), jetCorrections = ('AK4PFPuppi', #['L1FastJet\
-#', 'L2Relative', 'L3Absolute','L2L3Residual'], 'None'),
-#                pfCandidates = cms.InputTag('packedPFCandidates'),
-#                pvSource = cms.InputTag('offlineSlimmedPrimaryVertices'),
-#              svSource = cms.InputTag('slimmedSecondaryVertices'),
-#                 muSource =cms.InputTag( 'slimmedMuons'),
-#                 elSource = cms.InputTag('slimmedElectrons'),
-#                 genParticles= cms.InputTag('prunedGenParticles'),
-#                 getJetMCFlavour=False
-#)
-
-#process.patJetsPuppi.addGenPartonMatch = cms.bool(False)
-#process.patJetsPuppi.addGenJetMatch = cms.bool(False) 
 
 # Residue from AOD and RECO running
 calo_collection=''
@@ -136,94 +113,38 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   genJetsAK4             = cms.InputTag('slimmedGenJets'), 
   genJetsAK8             = cms.InputTag('slimmedGenJetsAK8'),  
 
-
-  ## trigger ###################################
-  #triggerAlias     = cms.vstring('Fat','PFHT650','PFNoPUHT650','HT750','HT550'),
-  ##### For 0T data  #####
-  #triggerAlias     = cms.vstring('L1Jet68','L1Jet36','L1Jet16','L1EG20','L1EG5'),
-  ##### For JetHT PD ##### 
-#  triggerAlias     = cms.vstring('PFHT780','PFHT890','PFHT1050',
-#                                 'PFJET400','PFJET450','PFJET500','PFJET550',
-#                                 'Mu50',
-#		                 'CaloJet500NoJetID','CaloJet550NoJetID',                               'HLT_PFHT500_PFMET100_PFMHT100_IDTight','HLT_PFHT500_PFMET110_PFMHT110_IDTight','HLT_PFHT700_PFMET85_PFMHT85_IDTight','HLT_PFHT700_PFMET95_PFMHT95_IDTight',
-#'HLT_PFHT800_PFMET75_PFMHT75_IDTight','HLT_PFHT800_PFMET85_PFMHT85_IDTight',
-#'PFHT380_SixJet32_DoubleBTagCSV_p075', 
-#'HLT_PFHT430_SixJet40_BTagCSV_p080'),                                 
-#
-
-#  triggerSelection = cms.vstring(
-
-     ###
-     ### For JetHT PD ###
-     ###
-#     'HLT_PFHT780_v*',  # it exists and it is the PFHT prescaled 
-#     'HLT_PFHT890_v*',  # it exists and it is the PFHT prescaled
-#     'HLT_PFHT1050_v*', # it exists and it is the PFHT unprescaled
-#     'HLT_PFJet400_v*', # it exists and it is prescaled
-#     'HLT_PFJet450_v*', # it exists and it is unprescaled
-#  'HLT_PFJet550_v*', # it exists and it is unprescaled
-#     'HLT_Mu50_v*', 	# it exists and it is unprescaled
-#     'HLT_CaloJet500_NoJetID_v*', # it exists and it is unprescaled
-#     'HLT_CaloJet550_NoJetID_v*', # it exists and it is unprescaled
-#     'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v*', # it exists and it is unprescaled
-#     'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v*', # it exists and it is unprescaled 
-#     'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v*', # it exists and it is unprescaled
-#     'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v*', # it exists and it is unprescaled
-##     'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v*', # it exists and it is unprescaled
- #    'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v*', # it exists and it is unprescaled
- #    'HLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v*', # it exists and it is unprescaled
- #    'HLT_PFHT430_SixJet40_BTagCSV_p080_v*',       # it exists and it is unprescaled
-     ###
- # ),
-
-
-  triggerAlias     = cms.vstring('PFHT800','PFHT1050','PFHT900',
-                                 'PFJET400','PFJET200','PFJET500','PFJET550',
-                                 'Mu50',
-		                 'CaloJet500NoJetID','CaloJet550NoJetID',                               'HLT_PFHT500_PFMET100_PFMHT100_IDTight','HLT_PFHT500_PFMET110_PFMHT110_IDTight','HLT_PFHT700_PFMET85_PFMHT85_IDTight','HLT_PFHT700_PFMET95_PFMHT95_IDTight',
-'HLT_PFHT800_PFMET75_PFMHT75_IDTight','HLT_PFHT800_PFMET85_PFMHT85_IDTight',
-'PFHT380_SixJet32_DoubleBTagCSV_p075', 
-'HLT_PFHT430_SixJet40_BTagCSV_p080'),                                 
-#
+  TriggerResultsTag	= cms.InputTag('TriggerResults','','HLT'),
+  l1tResults            = cms.InputTag(''),
+  daqPartitions         = cms.uint32(1),
+  l1tIgnoreMaskAndPrescale = cms.bool(False),
+  throw                 = cms.bool(False), 
 
   triggerSelection = cms.vstring(
 
      ###
-     ### For JetHT PD ###
+     #ATTENTION: The order below is NOT the order that they will appear in the "triggerResult" vector in the output tree.
      ###
-     'HLT_PFHT800_v*',  # it exists and it is the PFHT prescaled 
-     'HLT_PFHT1050_v*',  # it exists and it is the PFHT prescaled
-     'HLT_PFHT900_v*', # it exists and it is the PFHT unprescaled
-     'HLT_PFJet400_v*', # it exists and it is prescaled
-     'HLT_PFJet200_v*', # it exists and it is unprescaled
-     'HLT_PFJet500_v*', # it exists and it is unprescaled
-     'HLT_PFJet550_v*', # it exists and it is unprescaled
-     'HLT_Mu50_v*', 	# it exists and it is unprescaled
-     'HLT_CaloJet500_NoJetID_v*', # it exists and it is unprescaled
-     'HLT_CaloJet550_NoJetID_v*', # it exists and it is unprescaled
-     'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v*', # it exists and it is unprescaled
-     'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v*', # it exists and it is unprescaled 
-     'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v*', # it exists and it is unprescaled
-     'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v*', # it exists and it is unprescaled
-     'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v*', # it exists and it is unprescaled
-     'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v*', # it exists and it is unprescaled
-     'HLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v*', # it exists and it is unprescaled
-     'HLT_PFHT430_SixJet40_BTagCSV_p080_v*',       # it exists and it is unprescaled
+     'HLT_PFHT800_v',  # it exists and it is the PFHT prescaled 
+     'HLT_PFHT1050_v',  # it exists and it is the PFHT prescaled
+     'HLT_PFHT900_v', # it exists and it is the PFHT unprescaled
+     'HLT_PFJet400_v', # it exists and it is prescaled
+     'HLT_PFJet200_v', # it exists and it is unprescaled
+     'HLT_PFJet500_v', # it exists and it is unprescaled
+     'HLT_PFJet550_v', # it exists and it is unprescaled
+     'HLT_Mu50_v', 	# it exists and it is unprescaled
+     'HLT_CaloJet500_NoJetID_v', # it exists and it is unprescaled
+     'HLT_CaloJet550_NoJetID_v', # it exists and it is unprescaled
+     'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v', # it exists and it is unprescaled
+     'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v', # it exists and it is unprescaled 
+     'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v', # it exists and it is unprescaled
+     'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v', # it exists and it is unprescaled
+     'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v', # it exists and it is unprescaled
+     'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v', # it exists and it is unprescaled
+     'HLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v', # it exists and it is unprescaled
+     'HLT_PFHT430_SixJet40_BTagCSV_p080_v',       # it exists and it is unprescaled
      ###
   ),
 
-
-
-  triggerConfiguration = cms.PSet(
-    hltResults            = cms.InputTag('TriggerResults','','HLT'),
-    l1tResults            = cms.InputTag(''),
-    daqPartitions         = cms.uint32(1),
-    l1tIgnoreMaskAndPrescale = cms.bool(False),
-    #l1tIgnoreMask         = cms.bool(False),
-   # l1techIgnorePrescales = cms.bool(False),
-    usePathStatus = cms.bool( True ),
-    throw                 = cms.bool(False)
-  ),
 
 
   ## Noise Filters ###################################
@@ -282,4 +203,3 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 process.p = cms.Path()
 process.p +=                      process.chs
 process.p +=                      process.dijets
-
