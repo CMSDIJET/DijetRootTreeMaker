@@ -152,7 +152,7 @@ void DijetTreeProducer::beginJob()
   //
   // Code compiles fine without this bit.
 
-  //triggerPassHisto_ = fs_->make<TH1F>("TriggerPass","TriggerPass",1,0,1);
+  triggerPassHisto_ = fs_->make<TH1F>("TriggerPass","TriggerPass",1,0,1);
   //triggerPassHisto_->SetBit(TH1::kCanRebin); // Does now work in CMSSW 806
   //triggerPassHisto_->GetXaxis()->SetCanExtend(true);
   
@@ -649,6 +649,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   
   //-------------- Trigger Info -----------------------------------
 
+  triggerPassHisto_->Fill("totalEvents",1);
   edm::Handle<edm::TriggerResults> hltresults = iEvent.getHandle(srcTriggerResultsTag_);
   if (hltresults.isValid()) {
        const edm::TriggerNames &triggerNames_ = iEvent.triggerNames(*hltresults);
@@ -664,10 +665,14 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	      //cout << "trig = " << trigName << ", pass = " << accept << endl;
 	      triggerName_->push_back(trigName);
 	      triggerResult_->push_back(accept);
+		   
+	      if(accept){
+		triggerPassHisto_->Fill(trigName.c_str(),1);
+	      }
 	   }
 	 }
        }
-     }
+  }
 
       
   //-------------- Noise Filter Info -----------------------------------
