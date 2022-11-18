@@ -80,6 +80,8 @@ class DijetTreeProducer : public edm::EDAnalyzer
     
     edm::EDGetTokenT<std::vector<PileupSummaryInfo> > srcPU_;
     edm::EDGetTokenT<edm::TriggerResults> srcTriggerResultsTag_;
+    edm::EDGetTokenT<edm::TriggerResults> srcNoiseFilterResultsTag_;
+
     edm::EDGetTokenT<GenEventInfoProduct> srcGenInfo_;
 
     edm::Service<TFileService> fs_;
@@ -99,24 +101,14 @@ class DijetTreeProducer : public edm::EDAnalyzer
     std::vector<std::string> *triggerName_;
 
     //---- NOISE FILTERS -------------------------
-    triggerExpression::Data noiseFilterCache_;
-    triggerExpression::Evaluator * HBHENoiseFilter_Selector_;
-    triggerExpression::Evaluator * ECALDeadCellNoiseFilter_Selector_;
-    triggerExpression::Evaluator * GoodVtxNoiseFilter_Selector_;
-    triggerExpression::Evaluator * EEBadScNoiseFilter_Selector_;
-    triggerExpression::Evaluator * BeamHaloFilter_Selector_;
-    triggerExpression::Evaluator * HBHENoiseIsoFilter_Selector_;
-    triggerExpression::Evaluator * BadChargedCandidateFilter_Selector_;
-    triggerExpression::Evaluator * BadPFMuonFilter_Selector_;
-
-    bool passFilterHBHE_;
-    bool passFilterglobalSuperTightHalo2016_;
-    bool  passFilterHBHEIso_;
-    bool passFilterECALDeadCell_;
-    bool passFilterGoodVtx_;
-    bool passFilterEEBadSc_;
-    bool passFilterBadChargedCandidate_;
-    bool passFilterBadPFMuon_;
+    bool passFilter_goodVertices_;
+    bool passFilter_globalSuperTightHalo2016_;
+    bool passFilter_HBHENoise_;
+    bool passFilter_HBHENoiseIso_;
+    bool passFilter_EcalDeadCellTriggerPrimitive_;
+    bool passFilter_BadPFMuon_;
+    bool passFilter_BadChargedCandidate_;
+    bool passFilter_eeBadSc_;
 
 
     //---- jet and genJet variables --------------

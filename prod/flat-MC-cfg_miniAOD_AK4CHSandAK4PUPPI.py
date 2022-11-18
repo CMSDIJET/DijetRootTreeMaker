@@ -11,7 +11,7 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.GlobalTag.globaltag = THISGLOBALTAG
-#process.GlobalTag.globaltag = '122X_mcRun3_2021_realistic_v9'
+#process.GlobalTag.globaltag = '106X_upgrade2018_realistic_v16_L1v1'
 
 
 #--------------------- Report and output ---------------------------
@@ -77,8 +77,8 @@ process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/Run3Winter22MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13p6TeV_pythia8/MINIAODSIM/122X_mcRun3_2021_realistic_v9-v2/2430000/01796a5d-9b6a-46fc-a36f-150cb43af911.root')
-    #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18MiniAODv2/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2520000/02DA51E2-0619-C045-877E-7235570345C6.root')
+    #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/Run3Winter22MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13p6TeV_pythia8/MINIAODSIM/122X_mcRun3_2021_realistic_v9-v2/2430000/01796a5d-9b6a-46fc-a36f-150cb43af911.root')
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18MiniAODv2/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2520000/02DA51E2-0619-C045-877E-7235570345C6.root')
     )
 
 
@@ -113,6 +113,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   genJetsAK8             = cms.InputTag('slimmedGenJetsAK8'),   
 
   TriggerResultsTag	= cms.InputTag('TriggerResults','','HLT'),
+  NoiseFilterResultsTag	= cms.InputTag('TriggerResults','','RECO'),
   l1tResults            = cms.InputTag(''),
   daqPartitions         = cms.uint32(1),
   l1tIgnoreMaskAndPrescale = cms.bool(False),
@@ -152,47 +153,24 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ),
 
 
-
-  ## Noise Filters ###################################
-  noiseFilterSelection_HBHENoiseFilter = cms.string('Flag_HBHENoiseFilter'),
-  noiseFilterSelection_globalSuperTightHalo2016Filter = cms.string('Flag_globalSuperTightHalo2016Filter'),
-  noiseFilterSelection_HBHENoiseIsoFilter = cms.string('Flag_HBHENoiseIsoFilter'),
-  noiseFilterSelection_EcalDeadCellTriggerPrimitiveFilter = cms.string('Flag_EcalDeadCellTriggerPrimitiveFilter'),
-  noiseFilterSelection_goodVertices = cms.string('Flag_goodVertices'),
-  noiseFilterSelection_eeBadScFilter = cms.string('Flag_eeBadScFilter'),
-  noiseFilterSelection_BadChargedCandidateFilter = cms.string('Flag_BadChargedCandidateFilter'),
-  noiseFilterSelection_BadPFMuonFilter = cms.string('Flag_BadPFMuonFilter'),
-
-  noiseFilterConfiguration = cms.PSet(
-    usePathStatus = cms.bool( True ),
-    hltResults            = cms.InputTag('TriggerResults','','PAT'),
-    l1tResults            = cms.InputTag(''),
-    daqPartitions         = cms.uint32(1),
-    l1tIgnoreMaskAndPrescale = cms.bool(False),
-    #l1tIgnoreMask         = cms.bool(False),
-    #l1techIgnorePrescales = cms.bool(False),
-    throw                 = cms.bool(False)
-  ),
-
-
   ## JECs ################
   redoJECs  = cms.bool(True),
 
   ## Version Summer15_25nsV3
-  L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK4PFchs.txt'),
-  L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK4PFchs.txt'),
-  L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK4PFchs.txt'),
-  ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
-  L1corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK8PFchs.txt'),
-  L2corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK8PFchs.txt'),
-  L3corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK8PFchs.txt'),
-  ResCorrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
-  L1corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L1FastJet_AK4PFchs.txt'),
-  L2corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L2Relative_AK4PFchs.txt'),
-  L3corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK4PFchs.txt'),
-  L1corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L1FastJet_AK8PFchs.txt'),
-  L2corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L2Relative_AK8PFchs.txt'),
-  L3corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK8PFchs.txt')
+  L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L1FastJet_AK4PFchs.txt'),
+  L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L2Relative_AK4PFchs.txt'),
+  L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L3Absolute_AK4PFchs.txt'),
+  ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_RunCD_V1_DATA_L2L3Residual_AK4PFPuppi.txt'),
+  L1corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L1FastJet_AK4PFPuppi.txt'),
+  L2corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L2Relative_AK4PFPuppi.txt'),
+  L3corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L3Absolute_AK4PFPuppi.txt'),
+  ResCorrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_RunCD_V1_DATA_L2L3Residual_AK4PFPuppi.txt'),
+  L1corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L1FastJet_AK4PFchs.txt'),
+  L2corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L2Relative_AK4PFchs.txt'),
+  L3corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L3Absolute_AK4PFchs.txt'),
+  L1corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L1FastJet_AK4PFPuppi.txt'),
+  L2corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L2Relative_AK4PFPuppi.txt'),
+  L3corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Winter22Run3_V1/Winter22Run3_V1_L3Absolute_AK4PFPuppi.txt')
 )
 
 
