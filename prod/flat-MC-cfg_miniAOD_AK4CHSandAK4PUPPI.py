@@ -113,7 +113,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   genJetsAK8             = cms.InputTag('slimmedGenJetsAK8'),   
 
   TriggerResultsTag	= cms.InputTag('TriggerResults','','HLT'),
-  NoiseFilterResultsTag	= cms.InputTag('TriggerResults','','RECO'),
+  NoiseFilterResultsTag	= cms.InputTag('TriggerResults','','PAT'),
   l1tResults            = cms.InputTag(''),
   daqPartitions         = cms.uint32(1),
   l1tIgnoreMaskAndPrescale = cms.bool(False),
