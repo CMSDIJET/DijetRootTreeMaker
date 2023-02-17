@@ -126,24 +126,21 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
      ###
      #ATTENTION: The order below is NOT the order that they will appear in the "triggerResult" vector in the output tree.
      ###
-     'HLT_PFHT800_v',  # it exists and it is the PFHT prescaled 
+     'HLT_PFHT780_v',  # it exists and it is the PFHT prescaled 
      'HLT_PFHT1050_v',  # it exists and it is the PFHT prescaled
-     'HLT_PFHT900_v', # it exists and it is the PFHT unprescaled
+     'HLT_PFHT890_v', # it exists and it is the PFHT unprescaled
      'HLT_PFJet400_v', # it exists and it is prescaled
-     'HLT_PFJet200_v', # it exists and it is unprescaled
+     'HLT_PFJet450_v', # it exists and it is unprescaled
      'HLT_PFJet500_v', # it exists and it is unprescaled
      'HLT_PFJet550_v', # it exists and it is unprescaled
      'HLT_Mu50_v', 	# it exists and it is unprescaled
      'HLT_CaloJet500_NoJetID_v', # it exists and it is unprescaled
      'HLT_CaloJet550_NoJetID_v', # it exists and it is unprescaled
-     'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v', # it exists and it is unprescaled
-     'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v', # it exists and it is unprescaled 
-     'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v', # it exists and it is unprescaled
-     'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v', # it exists and it is unprescaled
-     'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v', # it exists and it is unprescaled
-     'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v', # it exists and it is unprescaled
-     'HLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v', # it exists and it is unprescaled
-     'HLT_PFHT430_SixJet40_BTagCSV_p080_v',       # it exists and it is unprescaled
+     'HLT_AK8PFJet320_v',       # it exists and it is unprescaled
+     'HLT_AK8PFJet400_v',       # it exists and it is unprescaled
+     'HLT_AK8PFJet450_v',       # it exists and it is unprescaled
+     'HLT_AK8PFJet500_v',       # it exists and it is unprescaled
+     'HLT_AK8PFJet550_v',       # it exists and it is unprescaled
      ###
   ),
 
