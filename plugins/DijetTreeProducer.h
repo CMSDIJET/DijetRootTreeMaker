@@ -107,6 +107,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     bool passFilter_HBHENoiseIso_;
     bool passFilter_EcalDeadCellTriggerPrimitive_;
     bool passFilter_BadPFMuon_;
+    bool passFilter_BadPFMuonDz_;
     bool passFilter_BadChargedCandidate_;
     bool passFilter_eeBadSc_;
 
