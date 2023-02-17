@@ -359,6 +359,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("passFilter_HBHENoiseIso"         		,&passFilter_HBHENoiseIso_        		,"passFilter_HBHENoiseIso_/O");
   outTree_->Branch("passFilter_EcalDeadCellTriggerPrimitive"    ,&passFilter_EcalDeadCellTriggerPrimitive_      ,"passFilter_EcalDeadCellTriggerPrimitive_/O");
   outTree_->Branch("passFilter_BadPFMuon"              		,&passFilter_BadPFMuon_             		,"passFilter_BadPFMuon_/O");
+  outTree_->Branch("passFilter_BadPFMuonDz"              	,&passFilter_BadPFMuonDz_             		,"passFilter_BadPFMuonDz_/O");
   outTree_->Branch("passFilter_BadChargedCandidate"  		,&passFilter_BadChargedCandidate_		,"passFilter_BadChargedCandidate_/O");
   outTree_->Branch("passFilter_eeBadSc"            		,&passFilter_eeBadSc_          			,"passFilter_eeBadSc_/O");
 
@@ -679,6 +680,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	 if(filterName.compare(0,23,"Flag_HBHENoiseIsoFilter")==0) passFilter_HBHENoiseIso_ = accept;
 	 if(filterName.compare(0,39,"Flag_EcalDeadCellTriggerPrimitiveFilter")==0) passFilter_EcalDeadCellTriggerPrimitive_ = accept;
 	 if(filterName.compare(0,20,"Flag_BadPFMuonFilter")==0) passFilter_BadPFMuon_ = accept;
+         if(filterName.compare(0,22,"Flag_BadPFMuonDzFilter")==0) passFilter_BadPFMuonDz_ = accept;
 	 if(filterName.compare(0,30,"Flag_BadChargedCandidateFilter")==0) passFilter_BadChargedCandidate_ = accept;
 	 if(filterName.compare(0,18,"Flag_eeBadScFilter")==0) passFilter_eeBadSc_ = accept;
        }
@@ -1099,6 +1101,7 @@ void DijetTreeProducer::initialize()
   passFilter_HBHENoiseIso_ 			= false;
   passFilter_EcalDeadCellTriggerPrimitive_	= false;
   passFilter_BadPFMuon_ 			= false;
+  passFilter_BadPFMuonDz_ 			= false;
   passFilter_BadChargedCandidate_ 		= false;
   passFilter_eeBadSc_ 				= false;
  
