@@ -2,7 +2,7 @@
 #define DijetTreeProducer_h
 
 #include "FWCore/Framework/interface/Event.h"
-#include "FWCore/Framework/interface/EDAnalyzer.h"
+#include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
@@ -23,9 +23,8 @@
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #include "DataFormats/PatCandidates/interface/MET.h"
-
-
-class DijetTreeProducer : public edm::EDAnalyzer 
+ 
+class DijetTreeProducer : public edm::one::EDAnalyzer<>
 {
   public:
     typedef reco::Particle::LorentzVector LorentzVector;
