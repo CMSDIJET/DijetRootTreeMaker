@@ -150,7 +150,7 @@ void DijetTreeProducer::beginJob()
   //--- book the tree -----------------------
   outTree_ = fs_->make<TTree>("events","events");
   outTree_->Branch("runNo"                ,&run_               ,"run_/I");
-  outTree_->Branch("evtNo"                ,&evt_               ,"evt_/I");
+  outTree_->Branch("evtNo"                ,&evt_               ,"evt_/L");
   outTree_->Branch("lumi"                 ,&lumi_              ,"lumi_/I");
   outTree_->Branch("nvtx"                 ,&nVtx_              ,"nVtx_/I");
   outTree_->Branch("rho"                  ,&rho_               ,"rho_/F");
@@ -174,7 +174,7 @@ void DijetTreeProducer::beginJob()
   gen_index	   = new std::vector<int>; 
   gen_motherIndex  = new std::vector<int>; 
 
-  outTree_->Branch("gen_eta"		,"vector<float>" , &gen_eta      	);
+ /* outTree_->Branch("gen_eta"		,"vector<float>" , &gen_eta      	);
   outTree_->Branch("gen_phi"		,"vector<float>" , &gen_phi 		);
   outTree_->Branch("gen_p"		,"vector<float>",   &gen_p 		);
   outTree_->Branch("gen_px"		,"vector<float>",  &gen_px 		);
@@ -190,17 +190,17 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("gen_status"	    	,"vector<int>",  &gen_status     	);
   outTree_->Branch("gen_index"	    	,"vector<int>",  &gen_index      	);
   outTree_->Branch("gen_motherIndex"	,"vector<int>", &gen_motherIndex 	);
-
+*/
   outTree_->Branch("nJetsAK4"           ,&nJetsAK4_          ,"nJetsAK4_/I"		);
   outTree_->Branch("htAK4"              ,&htAK4_             ,"htAK4_/F"		);
-  outTree_->Branch("mjjAK4"             ,&mjjAK4_            ,"mjjAK4_/F"		);
-  outTree_->Branch("dEtajjAK4"          ,&dEtajjAK4_         ,"dEtajjAK4_/F"		);
-  outTree_->Branch("dPhijjAK4"          ,&dPhijjAK4_         ,"dPhijjAK4_/F"		); 
+  //outTree_->Branch("mjjAK4"             ,&mjjAK4_            ,"mjjAK4_/F"		);
+  //outTree_->Branch("dEtajjAK4"          ,&dEtajjAK4_         ,"dEtajjAK4_/F"		);
+  //outTree_->Branch("dPhijjAK4"          ,&dPhijjAK4_         ,"dPhijjAK4_/F"		); 
   outTree_->Branch("nJetsAK8"           ,&nJetsAK8_          ,"nJetsAK8_/I"		);
   outTree_->Branch("htAK8"              ,&htAK8_             ,"htAK8_/F"		);
-  outTree_->Branch("mjjAK8"             ,&mjjAK8_            ,"mjjAK8_/F"		);
-  outTree_->Branch("dEtajjAK8"          ,&dEtajjAK8_         ,"dEtajjAK8_/F"		);
-  outTree_->Branch("dPhijjAK8"          ,&dPhijjAK8_         ,"dPhijjAK8_/F"		);
+  //outTree_->Branch("mjjAK8"             ,&mjjAK8_            ,"mjjAK8_/F"		);
+  //outTree_->Branch("dEtajjAK8"          ,&dEtajjAK8_         ,"dEtajjAK8_/F"		);
+  //outTree_->Branch("dPhijjAK8"          ,&dPhijjAK8_         ,"dPhijjAK8_/F"		);
 
   //------------------------------------------------------------------
   ptAK4_             = new std::vector<float>;
@@ -248,11 +248,11 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetEnergyAK4"            ,"vector<float>"     ,&energyAK4_);
   outTree_->Branch("jetEnergyPFAK4"          ,"vector<float>"     ,&energy_pfAK4_);
   outTree_->Branch("jetAreaAK4"              ,"vector<float>"     ,&areaAK4_);
-  outTree_->Branch("jetCSVAK4"               ,"vector<float>"     ,&csvAK4_);
-  outTree_->Branch("pFlavourAK4"             ,"vector<int>"       ,&pFlavourAK4_);
-  outTree_->Branch("hFlavourAK4"             ,"vector<int>"       ,&hFlavourAK4_);
-  outTree_->Branch("nbHadAK4"                ,"vector<int>"       ,&nbHadAK4_);
-  outTree_->Branch("ncHadAK4"                ,"vector<int>"       ,&ncHadAK4_);
+  //outTree_->Branch("jetCSVAK4"               ,"vector<float>"     ,&csvAK4_);
+  //outTree_->Branch("pFlavourAK4"             ,"vector<int>"       ,&pFlavourAK4_);
+  //outTree_->Branch("hFlavourAK4"             ,"vector<int>"       ,&hFlavourAK4_);
+  //outTree_->Branch("nbHadAK4"                ,"vector<int>"       ,&nbHadAK4_);
+  //outTree_->Branch("ncHadAK4"                ,"vector<int>"       ,&ncHadAK4_);
   outTree_->Branch("jetChfAK4"               ,"vector<float>"     ,&chfAK4_);
   outTree_->Branch("jetNhfAK4"               ,"vector<float>"     ,&nhfAK4_);
   outTree_->Branch("jetPhfAK4"               ,"vector<float>"     ,&phfAK4_);
@@ -270,8 +270,8 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("neHadMultAK4"           ,"vector<int>"      ,&neHadMultAK4_);   
   outTree_->Branch("neMultAK4"              ,"vector<int>"      ,&neMultAK4_);   
   outTree_->Branch("phoMultAK4"             ,"vector<int>"      ,&phoMultAK4_); 
-  outTree_->Branch("jetPtAK4matchCaloJet"                ,"vector<float>"     ,&ptAK4matchCaloJet_);
-  outTree_->Branch("jetEmfAK4matchCaloJet"               ,"vector<float>"     ,&emfAK4matchCaloJet_);
+  //outTree_->Branch("jetPtAK4matchCaloJet"                ,"vector<float>"     ,&ptAK4matchCaloJet_);
+  //outTree_->Branch("jetEmfAK4matchCaloJet"               ,"vector<float>"     ,&emfAK4matchCaloJet_);
 
   ptAK8_             = new std::vector<float>;
   jecAK8_            = new std::vector<float>;
@@ -317,11 +317,11 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetMassAK8"              ,"vector<float>"     ,&massAK8_);
   outTree_->Branch("jetEnergyAK8"            ,"vector<float>"     ,&energyAK8_);
   outTree_->Branch("jetAreaAK8"              ,"vector<float>"     ,&areaAK8_);
-  outTree_->Branch("jetCSVAK8"               ,"vector<float>"     ,&csvAK8_);
-  outTree_->Branch("pFlavourAK8"             ,"vector<int>"       ,&pFlavourAK8_);
-  outTree_->Branch("hFlavourAK8"             ,"vector<int>"       ,&hFlavourAK8_);
-  outTree_->Branch("nbHadAK8"                ,"vector<int>"       ,&nbHadAK8_);
-  outTree_->Branch("ncHadAK8"                ,"vector<int>"       ,&ncHadAK8_);
+  //outTree_->Branch("jetCSVAK8"               ,"vector<float>"     ,&csvAK8_);
+  //outTree_->Branch("pFlavourAK8"             ,"vector<int>"       ,&pFlavourAK8_);
+  //outTree_->Branch("hFlavourAK8"             ,"vector<int>"       ,&hFlavourAK8_);
+  //outTree_->Branch("nbHadAK8"                ,"vector<int>"       ,&nbHadAK8_);
+  //outTree_->Branch("ncHadAK8"                ,"vector<int>"       ,&ncHadAK8_);
   outTree_->Branch("jetChfAK8"               ,"vector<float>"     ,&chfAK8_);
   outTree_->Branch("jetNhfAK8"               ,"vector<float>"     ,&nhfAK8_);
   outTree_->Branch("jetPhfAK8"               ,"vector<float>"     ,&phfAK8_);
@@ -334,11 +334,11 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetHofAK8"               ,"vector<float>"     ,&hofAK8_);
   outTree_->Branch("idLAK8"                  ,"vector<int>"      ,&idLAK8_);   
   outTree_->Branch("idTAK8"                  ,"vector<int>"      ,&idTAK8_);   
-  outTree_->Branch("jetMassPrunedAK8"        ,"vector<float>"     ,&massPrunedAK8_);
-  outTree_->Branch("jetMassSoftDropAK8"      ,"vector<float>"     ,&massSoftDropAK8_);
-  outTree_->Branch("jetTau1AK8"              ,"vector<float>"     ,&tau1AK8_);
-  outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
-  outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_);  
+  //outTree_->Branch("jetMassPrunedAK8"        ,"vector<float>"     ,&massPrunedAK8_);
+  //outTree_->Branch("jetMassSoftDropAK8"      ,"vector<float>"     ,&massSoftDropAK8_);
+  //outTree_->Branch("jetTau1AK8"              ,"vector<float>"     ,&tau1AK8_);
+  //outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
+  //outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_);  
   outTree_->Branch("chHadMultAK8"          ,"vector<int>"      ,&chHadMultAK8_);   
   outTree_->Branch("chMultAK8"              ,"vector<int>"      ,&chMultAK8_);   
   outTree_->Branch("neHadMultAK8"           ,"vector<float>"      ,&neHadMultAK8_);   
@@ -362,7 +362,8 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("passFilter_BadPFMuonDz"              	,&passFilter_BadPFMuonDz_             		,"passFilter_BadPFMuonDz_/O");
   outTree_->Branch("passFilter_BadChargedCandidate"  		,&passFilter_BadChargedCandidate_		,"passFilter_BadChargedCandidate_/O");
   outTree_->Branch("passFilter_eeBadSc"            		,&passFilter_eeBadSc_          			,"passFilter_eeBadSc_/O");
-
+  outTree_->Branch("passFilter_ecalBadCalib"            	,&passFilter_ecalBadCalib_          		,"passFilter_ecalBadCalib_/O");
+  outTree_->Branch("passFilter_hfNoisyHits"            		,&passFilter_hfNoisyHits_          		,"passFilter_hfNoisyHits_/O");
 
 
   //------------------- MC ---------------------------------
@@ -378,7 +379,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("weight"               ,&weight_            ,"weight_/F");
 
   outTree_->Branch("nGenJetsAK4"             ,&nGenJetsAK4_          ,"nGenJetsAK4_/I");
-  outTree_->Branch("nGenJetsAK8"             ,&nGenJetsAK8_          ,"nGenJetsAK8_/I");
+  //outTree_->Branch("nGenJetsAK8"             ,&nGenJetsAK8_          ,"nGenJetsAK8_/I");
 
   ptGenAK4_             = new std::vector<float>;
   etaGenAK4_            = new std::vector<float>;
@@ -396,11 +397,12 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetPhiGenAK4"               ,"vector<float>"     ,&phiGenAK4_);
   outTree_->Branch("jetMassGenAK4"              ,"vector<float>"     ,&massGenAK4_);
   outTree_->Branch("jetEnergyGenAK4"            ,"vector<float>"     ,&energyGenAK4_);
-  outTree_->Branch("jetPtGenAK8"                ,"vector<float>"     ,&ptGenAK8_);
-  outTree_->Branch("jetEtaGenAK8"               ,"vector<float>"     ,&etaGenAK8_);
-  outTree_->Branch("jetPhiGenAK8"               ,"vector<float>"     ,&phiGenAK8_);
-  outTree_->Branch("jetMassGenAK8"              ,"vector<float>"     ,&massGenAK8_);
-  outTree_->Branch("jetEnergyGenAK8"            ,"vector<float>"     ,&energyGenAK8_);
+  
+  //outTree_->Branch("jetPtGenAK8"                ,"vector<float>"     ,&ptGenAK8_);
+  //outTree_->Branch("jetEtaGenAK8"               ,"vector<float>"     ,&etaGenAK8_);
+  //outTree_->Branch("jetPhiGenAK8"               ,"vector<float>"     ,&phiGenAK8_);
+  //outTree_->Branch("jetMassGenAK8"              ,"vector<float>"     ,&massGenAK8_);
+  //outTree_->Branch("jetEnergyGenAK8"            ,"vector<float>"     ,&energyGenAK8_);
 
 
 }
@@ -683,6 +685,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
          if(filterName.compare(0,22,"Flag_BadPFMuonDzFilter")==0) passFilter_BadPFMuonDz_ = accept;
 	 if(filterName.compare(0,30,"Flag_BadChargedCandidateFilter")==0) passFilter_BadChargedCandidate_ = accept;
 	 if(filterName.compare(0,18,"Flag_eeBadScFilter")==0) passFilter_eeBadSc_ = accept;
+	 if(filterName.compare(0,23,"Flag_ecalBadCalibFilter")==0) passFilter_ecalBadCalib_ = accept;
+	 if(filterName.compare(0,22,"Flag_hfNoisyHitsFilter")==0) passFilter_hfNoisyHits_ = accept;
        }
      }
 
@@ -768,7 +772,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
     int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-    int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.6 && chf>0 && chMult>0 && cemf<0.80) || fabs(eta)>2.6);
+    int idT = (nhf<0.99 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.6 && chf>0.01 && chMult>0 && cemf<0.80) || fabs(eta)>2.6);
 
        
       
@@ -902,7 +906,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
     int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-    int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.6 && chf>0 && chMult>0 && cemf<0.80) || fabs(eta)>2.6);
+    int idT = (nhf<0.99 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.6 && chf>0.01 && chMult>0 && cemf<0.80) || fabs(eta)>2.6);
 
       
     if (pt > ptMinAK8_) {
@@ -1104,6 +1108,8 @@ void DijetTreeProducer::initialize()
   passFilter_BadPFMuonDz_ 			= false;
   passFilter_BadChargedCandidate_ 		= false;
   passFilter_eeBadSc_ 				= false;
+  passFilter_ecalBadCalib_ 			= false;
+  passFilter_hfNoisyHits_ 			= false;
  
 
   //----- MC -------
@@ -1153,4 +1159,3 @@ DijetTreeProducer::~DijetTreeProducer()
 }
 
 DEFINE_FWK_MODULE(DijetTreeProducer);
-

@@ -91,7 +91,8 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     TH1F *triggerPassHisto_,*triggerNamesHisto_,*puHisto_;
     //---- output TREE variables ------
     //---- global event variables -----
-    int   run_,evt_,nVtx_,lumi_;
+    int   run_,nVtx_,lumi_;
+    long int evt_;
     int   nJetsAK4_, nJetsAK8_, nGenJetsAK4_, nGenJetsAK8_;
     float rho_,met_,metSig_;
     float htAK4_,mjjAK4_,dEtajjAK4_,dPhijjAK4_;
@@ -109,6 +110,8 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     bool passFilter_BadPFMuonDz_;
     bool passFilter_BadChargedCandidate_;
     bool passFilter_eeBadSc_;
+    bool passFilter_ecalBadCalib_;
+    bool passFilter_hfNoisyHits_;
 
 
     //---- jet and genJet variables --------------
