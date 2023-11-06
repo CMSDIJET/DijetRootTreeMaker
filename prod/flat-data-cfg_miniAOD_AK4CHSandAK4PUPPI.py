@@ -9,7 +9,7 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-#process.GlobalTag.globaltag = '124X_dataRun3_Prompt_v4'
+#process.GlobalTag.globaltag = '130X_dataRun3_v2'
 process.GlobalTag.globaltag = THISGLOBALTAG
 
 #--------------------- Report and output ---------------------------
@@ -79,16 +79,11 @@ process.out.outputCommands.append("keep *_slimmedGenJets_*_*")
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2018A/JetHT/MINIAOD/12Nov2019_UL2018-v2/100000/00DC6D7F-C300-504F-A3BC-497C7D8FDA98.root')
-    #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2018A/JetHT/MINIAOD/12Nov2019_UL2018-v2/100000/006D4A04-6DF4-7941-B54F-12CEF66AEE20.root') 
-    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2022C/JetMET/MINIAOD/PromptReco-v1/000/356/426/00000/13b0c5fc-ed23-413b-8338-8834bf2e5f95.root')  
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2023C/JetMET0/MINIAOD/22Sep2023_v2-v1/2540000/01c06858-67d2-40e6-9ad3-9af02f98f951.root') 
+    #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2022C/JetMET/MINIAOD/22Sep2023-v1/2530000/08f285fd-506b-40de-a0e2-28a611411ff4.root')  
 )
 
 ##-------------------- User analyzer  --------------------------------
-
-# Residue from AOD and RECO running
-calo_collection=''
-cluster_collection=''
-pfcalo_collection=''
    
 
 #UpdatePuppiTuneV15(process,False)
@@ -116,6 +111,8 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   TriggerResultsTag	= cms.InputTag('TriggerResults','','HLT'),
   NoiseFilterResultsTag	= cms.InputTag('TriggerResults','','RECO'),
+  l1GtSrc               = cms.InputTag('gtStage2Digis','','RECO'),
+  UnprefirableEventToken= cms.InputTag('simGtExtUnprefireable','','PAT'),
   l1tResults            = cms.InputTag(''),
   daqPartitions         = cms.uint32(1),
   l1tIgnoreMaskAndPrescale = cms.bool(False),

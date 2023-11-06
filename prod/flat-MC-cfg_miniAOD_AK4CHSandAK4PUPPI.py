@@ -11,7 +11,7 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.GlobalTag.globaltag = THISGLOBALTAG
-#process.GlobalTag.globaltag = '106X_upgrade2018_realistic_v16_L1v1'
+#process.GlobalTag.globaltag = '130X_mcRun3_2022_realistic_v5'
 
 
 #--------------------- Report and output ---------------------------
@@ -19,7 +19,7 @@ process.GlobalTag.globaltag = THISGLOBALTAG
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 5000
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 
 process.TFileService=cms.Service("TFileService",
@@ -78,7 +78,8 @@ process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/Run3Winter22MiniAOD/QCD_Pt-15to7000_TuneCP5_Flat_13p6TeV_pythia8/MINIAODSIM/122X_mcRun3_2021_realistic_v9-v2/2430000/01796a5d-9b6a-46fc-a36f-150cb43af911.root')
-    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18MiniAODv2/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2520000/02DA51E2-0619-C045-877E-7235570345C6.root')
+    #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/RunIISummer20UL18MiniAODv2/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/2520000/02DA51E2-0619-C045-877E-7235570345C6.root')
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/mc/Run3Summer22MiniAODv4/QCD_PT-1000to1400_TuneCP5_13p6TeV_pythia8/MINIAODSIM/130X_mcRun3_2022_realistic_v5_ext1-v2/2520000/09b1fabe-7f4c-4d60-9563-750aac34701d.root')
     )
 
 
@@ -86,11 +87,6 @@ process.source = cms.Source("PoolSource",
 
 ##-------------------- User analyzer  --------------------------------
 
-#Residue from deleted reco and AOD sequences
-calo_collection=''
-cluster_collection=''
-pfcalo_collection=''
-   
 
 process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   
@@ -114,6 +110,8 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   TriggerResultsTag	= cms.InputTag('TriggerResults','','HLT'),
   NoiseFilterResultsTag	= cms.InputTag('TriggerResults','','PAT'),
+  l1GtSrc               = cms.InputTag('gtStage2Digis','','RECO'),
+  UnprefirableEventToken= cms.InputTag('simGtExtUnprefireable','','PAT'),
   l1tResults            = cms.InputTag(''),
   daqPartitions         = cms.uint32(1),
   l1tIgnoreMaskAndPrescale = cms.bool(False),

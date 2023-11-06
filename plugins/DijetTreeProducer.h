@@ -9,6 +9,7 @@
 #include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionEvaluator.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionParser.h"
+#include "L1Trigger/L1TGlobal/interface/L1TGlobalUtil.h"
 #include "DataFormats/JetReco/interface/Jet.h"
 #include "TTree.h"
 #include "TH1F.h"
@@ -80,6 +81,8 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     edm::EDGetTokenT<std::vector<PileupSummaryInfo> > srcPU_;
     edm::EDGetTokenT<edm::TriggerResults> srcTriggerResultsTag_;
     edm::EDGetTokenT<edm::TriggerResults> srcNoiseFilterResultsTag_;
+    edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
+    edm::EDGetTokenT<GlobalExtBlkBxCollection> UnprefirableEventToken_;
 
     edm::EDGetTokenT<GenEventInfoProduct> srcGenInfo_;
 
@@ -113,6 +116,8 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     bool passFilter_ecalBadCalib_;
     bool passFilter_hfNoisyHits_;
 
+    bool passL1_Initial_bx0_473_, Flag_IsUnprefirable_, Flag_NotAffectedByPrefire_;
+
 
     //---- jet and genJet variables --------------
     std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*csvAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_,*nemfAK4_,*cemfAK4_;
@@ -122,9 +127,13 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     
     std::vector<float> *ptAK4matchCaloJet_,*emfAK4matchCaloJet_;
 
+    std::vector<float> *probbAK4_, *probbbAK4_, *probcAK4_, *probudsAK4_, *probgAK4_;
+
     std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*csvAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_,*nemfAK8_,*cemfAK8_, *massPrunedAK8_, *massSoftDropAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
     std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_;
     std::vector<float> *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
+
+    std::vector<float> *probbAK8_, *probbbAK8_, *probcAK8_, *probudsAK8_, *probgAK8_;
 
     std::vector<float> *hf_hfAK8_, *hf_emfAK8_, *hofAK8_;
     std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;
