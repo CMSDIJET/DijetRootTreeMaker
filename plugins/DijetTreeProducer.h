@@ -97,7 +97,7 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     int   run_,nVtx_,lumi_;
     long int evt_;
     int   nJetsAK4_, nJetsAK8_, nGenJetsAK4_, nGenJetsAK8_;
-    float rho_,met_,metSig_;
+    float rho_,met_,metSig_,metphi_;
     float htAK4_,mjjAK4_,dEtajjAK4_,dPhijjAK4_;
     float htAK8_,mjjAK8_,dEtajjAK8_,dPhijjAK8_;
     std::vector<bool> *triggerResult_;

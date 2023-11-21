@@ -158,6 +158,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("rho"                  ,&rho_               ,"rho_/F");
   outTree_->Branch("met"                  ,&met_               ,"met_/F");
   outTree_->Branch("metSig"               ,&metSig_            ,"metSig_/F");
+  outTree_->Branch("metphi"               ,&metphi_            ,"metphi_/F");
 
   gen_eta           = new std::vector<float>;
   gen_phi           = new std::vector<float>;
@@ -561,6 +562,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   //-------------- Event Info -----------------------------------
   rho_    = *rho;
   met_    = (*met)[0].et();
+  metphi_ = (*met)[0].phi();
   if ((*met)[0].sumEt() > 0) {
     metSig_ = (*met)[0].et()/(*met)[0].sumEt();
   }
@@ -1095,6 +1097,7 @@ void DijetTreeProducer::initialize()
   rho_            = -999;
   met_            = -999;
   metSig_         = -999;
+  metphi_         = -999;
   nJetsAK4_          = -999;
   htAK4_             = -999;
   mjjAK4_            = -999; 
