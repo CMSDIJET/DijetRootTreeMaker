@@ -91,11 +91,11 @@ process.source = cms.Source("PoolSource",
 process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   # There's no avoiding this in Consumes era
-  isData          = cms.bool(True),
+  isData           = cms.bool(True),
 
   ## JETS/MET ########################################
-  jetsAK4             = cms.InputTag('slimmedJets'), 
-  jetsAK8             = cms.InputTag('slimmedJetsPuppi'),     
+  jetsAK4          = cms.InputTag('slimmedJets'), 
+  jetsAK8          = cms.InputTag('slimmedJetsPuppi'),     
   rho              = cms.InputTag('fixedGridRhoFastjetAll'),
   met              = cms.InputTag('slimmedMETs'),
   vtx              = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -111,7 +111,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   TriggerResultsTag	= cms.InputTag('TriggerResults','','HLT'),
   NoiseFilterResultsTag	= cms.InputTag('TriggerResults','','RECO'),
-  l1GtSrc               = cms.InputTag('gtStage2Digis','','RECO'),
+  l1GtSrc               = cms.InputTag('gtStage2Digis','','PAT'),  #PAT for 19Dec2023, RECO for 22Sep2023 (do edmDumpEventContent to check) 
   UnprefirableEventToken= cms.InputTag('simGtExtUnprefireable','','PAT'),
   l1tResults            = cms.InputTag(''),
   daqPartitions         = cms.uint32(1),

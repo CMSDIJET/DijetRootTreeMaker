@@ -4,6 +4,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/one/EDAnalyzer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "HLTrigger/HLTcore/interface/TriggerExpressionData.h"
@@ -24,6 +25,7 @@
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #include "DataFormats/PatCandidates/interface/MET.h"
+
  
 class DijetTreeProducer : public edm::one::EDAnalyzer<>
 {
@@ -84,6 +86,9 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     edm::EDGetTokenT<BXVector<GlobalAlgBlk>> l1GtToken_;
     edm::EDGetTokenT<GlobalExtBlkBxCollection> UnprefirableEventToken_;
 
+    l1t::L1TGlobalUtil* l1GtUtils_;
+    edm::InputTag  algTag_, extTag_;
+
     edm::EDGetTokenT<GenEventInfoProduct> srcGenInfo_;
 
     edm::Service<TFileService> fs_;
@@ -116,7 +121,7 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     bool passFilter_ecalBadCalib_;
     bool passFilter_hfNoisyHits_;
 
-    bool passL1_Initial_bx0_473_, Flag_IsUnprefirable_, Flag_NotAffectedByPrefire_;
+    bool passL1_Initial_bx0_473_, Flag_IsUnprefirable_, Flag_NotAffectedByPrefire_, pass_bx1_;
 
 
     //---- jet and genJet variables --------------
@@ -127,13 +132,13 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     
     std::vector<float> *ptAK4matchCaloJet_,*emfAK4matchCaloJet_;
 
-    std::vector<float> *probbAK4_, *probbbAK4_, *probcAK4_, *probudsAK4_, *probgAK4_;
+    std::vector<float> *probbAK4_, *probbbAK4_, *problepbAK4_, *probcAK4_, *probudsAK4_, *probgAK4_;
 
     std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*csvAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_,*nemfAK8_,*cemfAK8_, *massPrunedAK8_, *massSoftDropAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
     std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_;
     std::vector<float> *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
 
-    std::vector<float> *probbAK8_, *probbbAK8_, *probcAK8_, *probudsAK8_, *probgAK8_;
+    std::vector<float> *probbAK8_, *probbbAK8_, *problepbAK8_, *probcAK8_, *probudsAK8_, *probgAK8_;
 
     std::vector<float> *hf_hfAK8_, *hf_emfAK8_, *hofAK8_;
     std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;

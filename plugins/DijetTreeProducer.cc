@@ -51,6 +51,10 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   l1GtToken_ = (consumes<BXVector<GlobalAlgBlk>>(cfg.getParameter<edm::InputTag>("l1GtSrc")));
   UnprefirableEventToken_ = (consumes<GlobalExtBlkBxCollection>(cfg.getParameter<edm::InputTag>("UnprefirableEventToken")));
 
+  algTag_ = cfg.getParameter<edm::InputTag>("l1GtSrc") ; 
+  extTag_ = cfg.getParameter<edm::InputTag>("l1GtSrc");
+  l1GtUtils_ = new l1t::L1TGlobalUtil(cfg, consumesCollector(), *this, algTag_, extTag_, l1t::UseEventSetupIn::Event);
+
   isData_ = cfg.getParameter<bool>("isData");
   if (!isData_){
      srcGenJetsAK4_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK4")));
@@ -160,8 +164,8 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("metSig"               ,&metSig_            ,"metSig_/F");
   outTree_->Branch("metphi"               ,&metphi_            ,"metphi_/F");
 
-  gen_eta           = new std::vector<float>;
-  gen_phi           = new std::vector<float>;
+  gen_eta          = new std::vector<float>;
+  gen_phi          = new std::vector<float>;
   gen_p            = new std::vector<float>;
   gen_px           = new std::vector<float>;
   gen_py           = new std::vector<float>;
@@ -212,11 +216,12 @@ void DijetTreeProducer::beginJob()
   phiAK4_            = new std::vector<float>;
   massAK4_           = new std::vector<float>;
   energyAK4_         = new std::vector<float>;
-  energy_pfAK4_    = new std::vector<float>;
+  energy_pfAK4_      = new std::vector<float>;
   areaAK4_           = new std::vector<float>;
   csvAK4_            = new std::vector<float>;
   probbAK4_	     = new std::vector<float>;
   probbbAK4_	     = new std::vector<float>;
+  problepbAK4_	     = new std::vector<float>;
   probcAK4_	     = new std::vector<float>;
   probudsAK4_	     = new std::vector<float>;
   probgAK4_	     = new std::vector<float>;
@@ -238,7 +243,7 @@ void DijetTreeProducer::beginJob()
   hofAK4_            = new std::vector<float>;
   idLAK4_            = new std::vector<int>;
   idTAK4_            = new std::vector<int>;
-  chHadMultAK4_     = new std::vector<int>;
+  chHadMultAK4_      = new std::vector<int>;
   chMultAK4_         = new std::vector<int>;
   neHadMultAK4_      = new std::vector<int>;
   neMultAK4_         = new std::vector<int>;
@@ -258,12 +263,13 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetAreaAK4"              ,"vector<float>"     ,&areaAK4_);
   outTree_->Branch("jetProbbAK4"	     ,"vector<float>"     ,&probbAK4_);
   outTree_->Branch("jetProbbbAK4"	     ,"vector<float>"     ,&probbbAK4_);
+  outTree_->Branch("jetProblepbAK4"	     ,"vector<float>"     ,&problepbAK4_);
   outTree_->Branch("jetProbcAK4"	     ,"vector<float>"     ,&probcAK4_);
   outTree_->Branch("jetProbudsAK4"	     ,"vector<float>"     ,&probudsAK4_);
   outTree_->Branch("jetProbgAK4"	     ,"vector<float>"     ,&probgAK4_);
   //outTree_->Branch("jetCSVAK4"               ,"vector<float>"     ,&csvAK4_);
-  //outTree_->Branch("pFlavourAK4"             ,"vector<int>"       ,&pFlavourAK4_);
-  //outTree_->Branch("hFlavourAK4"             ,"vector<int>"       ,&hFlavourAK4_);
+  outTree_->Branch("pFlavourAK4"             ,"vector<int>"       ,&pFlavourAK4_);
+  outTree_->Branch("hFlavourAK4"             ,"vector<int>"       ,&hFlavourAK4_);
   //outTree_->Branch("nbHadAK4"                ,"vector<int>"       ,&nbHadAK4_);
   //outTree_->Branch("ncHadAK4"                ,"vector<int>"       ,&ncHadAK4_);
   outTree_->Branch("jetChfAK4"               ,"vector<float>"     ,&chfAK4_);
@@ -296,6 +302,7 @@ void DijetTreeProducer::beginJob()
   csvAK8_            = new std::vector<float>;
   probbAK8_	     = new std::vector<float>;
   probbbAK8_	     = new std::vector<float>;
+  problepbAK8_	     = new std::vector<float>;
   probcAK8_	     = new std::vector<float>;
   probudsAK8_	     = new std::vector<float>;
   probgAK8_	     = new std::vector<float>;
@@ -337,12 +344,13 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetAreaAK8"              ,"vector<float>"     ,&areaAK8_);
   outTree_->Branch("jetProbbAK8"	     ,"vector<float>"     ,&probbAK8_);
   outTree_->Branch("jetProbbbAK8"	     ,"vector<float>"     ,&probbbAK8_);
+  outTree_->Branch("jetProblepbAK8"	     ,"vector<float>"     ,&problepbAK8_);
   outTree_->Branch("jetProbcAK8"	     ,"vector<float>"     ,&probcAK8_);
   outTree_->Branch("jetProbudsAK8"	     ,"vector<float>"     ,&probudsAK8_);
   outTree_->Branch("jetProbgAK8"	     ,"vector<float>"     ,&probgAK8_);
   //outTree_->Branch("jetCSVAK8"               ,"vector<float>"     ,&csvAK8_);
-  //outTree_->Branch("pFlavourAK8"             ,"vector<int>"       ,&pFlavourAK8_);
-  //outTree_->Branch("hFlavourAK8"             ,"vector<int>"       ,&hFlavourAK8_);
+  outTree_->Branch("pFlavourAK8"             ,"vector<int>"       ,&pFlavourAK8_);
+  outTree_->Branch("hFlavourAK8"             ,"vector<int>"       ,&hFlavourAK8_);
   //outTree_->Branch("nbHadAK8"                ,"vector<int>"       ,&nbHadAK8_);
   //outTree_->Branch("ncHadAK8"                ,"vector<int>"       ,&ncHadAK8_);
   outTree_->Branch("jetChfAK8"               ,"vector<float>"     ,&chfAK8_);
@@ -389,6 +397,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("passFilter_hfNoisyHits"            		,&passFilter_hfNoisyHits_          		,"passFilter_hfNoisyHits_/O");
 
   outTree_->Branch("passL1_Initial_bx0_473"			,&passL1_Initial_bx0_473_			,"passL1_Initial_bx0_473_/O");
+  outTree_->Branch("pass_bx1"					,&pass_bx1_					,"pass_bx1_/O");
   outTree_->Branch("Flag_IsUnprefirable"            		,&Flag_IsUnprefirable_          		,"Flag_IsUnprefirable_/O");
   outTree_->Branch("Flag_NotAffectedByPrefire"            	,&Flag_NotAffectedByPrefire_          		,"Flag_NotAffectedByPrefire_/O");
 
@@ -464,6 +473,7 @@ void DijetTreeProducer::endJob()
   delete csvAK4_;
   delete probbAK4_;
   delete probbbAK4_;
+  delete problepbAK4_;
   delete probcAK4_;
   delete probudsAK4_;
   delete probgAK4_;
@@ -500,6 +510,7 @@ void DijetTreeProducer::endJob()
   delete csvAK8_;
   delete probbAK8_;
   delete probbbAK8_;
+  delete problepbAK8_;
   delete probcAK8_;
   delete probudsAK8_;
   delete probgAK8_;
@@ -731,33 +742,40 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
   //-------------- Unprefirable events, pre-firing issue -----------------------------------
 
-  edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
-  iEvent.getByToken(l1GtToken_, l1GtHandle);
+  if (isData_){
+
+    edm::Handle<BXVector<GlobalAlgBlk>> l1GtHandle;
+    iEvent.getByToken(l1GtToken_, l1GtHandle);
   
+    bool passL1_Initial_bx0[512], passL1_Initial_bxplus1[512];
 
-  bool passL1_Initial_bx0[512];
-
-  for(int i =0; i <512; i++){
+    for(int i =0; i <512; i++){
     
-    passL1_Initial_bx0[i]= l1GtHandle->begin(0)->getAlgoDecisionInitial(i);
+      passL1_Initial_bx0[i]= l1GtHandle->begin(0)->getAlgoDecisionInitial(i);
+      passL1_Initial_bxplus1[i]= l1GtHandle->begin(+1)->getAlgoDecisionInitial(i);
 
-  }
-
-  passL1_Initial_bx0_473_ = passL1_Initial_bx0[473];
-
-
-  edm::Handle<GlobalExtBlkBxCollection> handleUnprefEventResults;
-  iEvent.getByToken(UnprefirableEventToken_, handleUnprefEventResults);
-  if(handleUnprefEventResults.isValid()){
-    if (handleUnprefEventResults->size() != 0) {
-      Flag_IsUnprefirable_ = handleUnprefEventResults->at(0, 0).getExternalDecision(GlobalExtBlk::maxExternalConditions - 1);
     }
+
+    passL1_Initial_bx0_473_ = passL1_Initial_bx0[473];
+
+
+    l1GtUtils_->retrieveL1(iEvent, iSetup, l1GtToken_);
+    int thebit = -1;
+    l1GtUtils_->getAlgBitFromName("L1_FirstBunchInTrain",thebit);
+    pass_bx1_ = passL1_Initial_bxplus1[thebit];
+
+
+    edm::Handle<GlobalExtBlkBxCollection> handleUnprefEventResults;
+    iEvent.getByToken(UnprefirableEventToken_, handleUnprefEventResults);
+    if(handleUnprefEventResults.isValid()){
+      if (handleUnprefEventResults->size() != 0) {
+        Flag_IsUnprefirable_ = handleUnprefEventResults->at(0, 0).getExternalDecision(GlobalExtBlk::maxExternalConditions - 1);
+      }
+    }
+
+    if( (passL1_Initial_bx0[473] && run_>=361468) || Flag_IsUnprefirable_) Flag_NotAffectedByPrefire_ = true;
+
   }
-
-
-  if( (passL1_Initial_bx0[473] && run_>=361468) || Flag_IsUnprefirable_) Flag_NotAffectedByPrefire_ = true;
-
-
 
   
   //----- at least one good vertex -----------
@@ -776,10 +794,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	{
 	  double correction = 1.;
 	  JetCorrectorAK4_DATA->setJetEta(ijet->eta());
+	  JetCorrectorAK4_DATA->setJetPhi(ijet->phi());
 	  JetCorrectorAK4_DATA->setJetPt(ijet->correctedJet(0).pt());
 	  JetCorrectorAK4_DATA->setJetA(ijet->jetArea());
 	  JetCorrectorAK4_DATA->setRho(rho_);
 	  JetCorrectorAK4_MC->setJetEta(ijet->eta());
+	  JetCorrectorAK4_MC->setJetPhi(ijet->phi());
 	  JetCorrectorAK4_MC->setJetPt(ijet->correctedJet(0).pt());
 	  JetCorrectorAK4_MC->setJetA(ijet->jetArea());
 	  JetCorrectorAK4_MC->setRho(rho_);
@@ -870,6 +890,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       csvAK4_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       probbAK4_         ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probb"));
       probbbAK4_        ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probbb"));
+      problepbAK4_      ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:problepb"));
       probcAK4_         ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probc"));
       probudsAK4_       ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probuds"));
       probgAK4_         ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probg"));
@@ -910,10 +931,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	  double correction = 1.;
 
 	  JetCorrectorAK8_DATA->setJetEta(ijet->eta());
+	  JetCorrectorAK8_DATA->setJetPhi(ijet->phi());
 	  JetCorrectorAK8_DATA->setJetPt(ijet->correctedJet(0).pt());
 	  JetCorrectorAK8_DATA->setJetA(ijet->jetArea());
 	  JetCorrectorAK8_DATA->setRho(rho_);
 	  JetCorrectorAK8_MC->setJetEta(ijet->eta());
+	  JetCorrectorAK8_MC->setJetPhi(ijet->phi());
 	  JetCorrectorAK8_MC->setJetPt(ijet->correctedJet(0).pt());
 	  JetCorrectorAK8_MC->setJetA(ijet->jetArea());
 	  JetCorrectorAK8_MC->setRho(rho_);
@@ -1007,6 +1030,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       csvAK8_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       probbAK8_         ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probb"));
       probbbAK8_        ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probbb"));
+      problepbAK8_      ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:problepb"));
       probcAK8_         ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probc"));
       probudsAK8_       ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probuds"));
       probgAK8_         ->push_back(ijet->bDiscriminator("pfParticleTransformerAK4JetTags:probg"));
@@ -1113,6 +1137,7 @@ void DijetTreeProducer::initialize()
   csvAK4_            ->clear();
   probbAK4_	     ->clear();
   probbbAK4_	     ->clear();
+  problepbAK4_	     ->clear();
   probcAK4_	     ->clear();
   probudsAK4_	     ->clear();
   probgAK4_	     ->clear();
@@ -1155,6 +1180,7 @@ void DijetTreeProducer::initialize()
   csvAK8_            ->clear();
   probbAK8_	     ->clear();
   probbbAK8_	     ->clear();
+  problepbAK8_	     ->clear();
   probcAK8_	     ->clear();
   probudsAK8_	     ->clear();
   probgAK8_	     ->clear();
@@ -1201,6 +1227,7 @@ void DijetTreeProducer::initialize()
   passFilter_hfNoisyHits_ 			= false;
 
   passL1_Initial_bx0_473_			= false;
+  pass_bx1_					= false;
   Flag_IsUnprefirable_ 				= false;
   Flag_NotAffectedByPrefire_			= false;
  
