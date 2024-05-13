@@ -7,7 +7,7 @@ import datetime
 import re
 
 usage = "usage: python createAndSubmitMC.py -d Output_PHYS14/ -v qq_RSG_gg_pu20bx25_TagXXX -i Inputs_PHYS14/InputList_qq_RSG_gg_pu20bx25_TagXXX.txt -t Inputs_MC2014_Test/crab3_template.py -c ../flat-signal-cfg_miniAOD.py --submit"
-print usage
+print (usage)
 
 parser = argparse.ArgumentParser(description='Process options.')
 
@@ -38,7 +38,7 @@ parser.add_argument("--submit",  action="store_true", dest="submit", default=Fal
 
 
 args = parser.parse_args()
-print args 
+print (args) 
 
 inputList = args.inputList
 storagedir = args.storagedir
@@ -80,14 +80,14 @@ for line in ins:
   if (line.startswith("#")):
    continue
 
-  print "line : "+line
-  print "dataset : "+dataset
-  print "processedevents : "+processedevents
-  print "filesperjob : "+filesperjob
-  print "globaltag : "+globaltag
+  print ("line : "+line)
+  print ("dataset : "+dataset)
+  print ("processedevents : "+processedevents)
+  print ("filesperjob : "+filesperjob)
+  print ("globaltag : "+globaltag)
 
   sample = dataset.split("/")[1]
-  print sample
+  print (sample)
 
 
   dict = {
@@ -104,27 +104,27 @@ for line in ins:
   cmssw_cfgfile = storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py"
   with open(cmssw_cfgfile, "wt") as fout:
     with open(template_cmssw, "rt") as fin:
-      for line_ in fin:
-	#fout.write(line_)
-	#line_=line_.strip() #Francesco (keep same python file indentation)
-	for k,v in dict.items():
-	  line_ = re.sub(k,v,line_)
-	fout.write(line_+"\n")
+        for line_ in fin:
+            # fout.write(line_)
+            # line_=line_.strip() # Francesco (keep same python file indentation)
+            for k,v in dict.items():
+                line_ = re.sub(k, v, line_)
+            fout.write(line_ + "\n")
 
 
-##create crab 3 configuration file
-  crab_cfgfile = storagedir+"/"+namedir+"/cfg/"+sample+"_crab.py"
+# Create crab 3 configuration file
+  crab_cfgfile = storagedir + "/" + namedir + "/cfg/" + sample + "_crab.py"
   with open(crab_cfgfile, "wt") as fout:
     with open(template_crab, "rt") as fin:
-      for line_ in fin:
-	line_=line_.strip()
-        for k,v in dict.items():
-	  line_ = re.sub(k,v,line_)
-        fout.write(line_+"\n")
+        for line_ in fin:
+            line_ = line_.strip()
+            for k, v in dict.items():
+                line_ = re.sub(k, v, line_)
+            fout.write(line_ + "\n")
 
   if submit:
-    print "Submitting jobs....."
-    #print crab_cfgfile
+    print ("Submitting jobs.....")
+    #print (crab_cfgfile)
     os.system("crab submit -c "+crab_cfgfile)
 
 

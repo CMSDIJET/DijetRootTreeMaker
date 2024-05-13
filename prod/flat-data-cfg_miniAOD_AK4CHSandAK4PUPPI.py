@@ -9,7 +9,7 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-#process.GlobalTag.globaltag = '130X_dataRun3_v2'
+#process.GlobalTag.globaltag = '140X_dataRun3_Prompt_v2'
 process.GlobalTag.globaltag = THISGLOBALTAG
 
 #--------------------- Report and output ---------------------------
@@ -79,8 +79,10 @@ process.out.outputCommands.append("keep *_slimmedGenJets_*_*")
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2018A/JetHT/MINIAOD/12Nov2019_UL2018-v2/100000/00DC6D7F-C300-504F-A3BC-497C7D8FDA98.root')
-    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2023C/JetMET0/MINIAOD/22Sep2023_v2-v1/2540000/01c06858-67d2-40e6-9ad3-9af02f98f951.root') 
+    #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2023C/JetMET0/MINIAOD/22Sep2023_v2-v1/2540000/01c06858-67d2-40e6-9ad3-9af02f98f951.root') 
     #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2022C/JetMET/MINIAOD/22Sep2023-v1/2530000/08f285fd-506b-40de-a0e2-28a611411ff4.root')  
+    #fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2024D/JetMET0/MINIAOD/PromptReco-v1/000/380/306/00000/0bbea276-f31b-4be3-b98e-98d3257d2cef.root')
+    fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2024C/JetMET0/MINIAOD/PromptReco-v1/000/379/415/00000/f41372ad-bc84-47c3-9c74-49f96cf26866.root')
 )
 
 ##-------------------- User analyzer  --------------------------------
@@ -111,7 +113,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   TriggerResultsTag	= cms.InputTag('TriggerResults','','HLT'),
   NoiseFilterResultsTag	= cms.InputTag('TriggerResults','','RECO'),
-  l1GtSrc               = cms.InputTag('gtStage2Digis','','PAT'),  #PAT for 19Dec2023, RECO for 22Sep2023 (do edmDumpEventContent to check) 
+  l1GtSrc               = cms.InputTag('gtStage2Digis','','RECO'),  #PAT for 19Dec2023, RECO for 22Sep2023 (do edmDumpEventContent to check) 
   UnprefirableEventToken= cms.InputTag('simGtExtUnprefireable','','PAT'),
   l1tResults            = cms.InputTag(''),
   daqPartitions         = cms.uint32(1),
