@@ -85,6 +85,48 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('root://cms-xrd-global.cern.ch//store/data/Run2024C/JetMET0/MINIAOD/PromptReco-v1/000/379/415/00000/f41372ad-bc84-47c3-9c74-49f96cf26866.root')
 )
 
+
+
+##########################################################################
+#
+# Compute b-tags on the fly
+#
+###########################################################################
+from PhysicsTools.PatAlgos.tools.jetTools import updateJetCollection
+
+from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4_cff import _pfUnifiedParticleTransformerAK4JetTagsAll as pfUnifiedParticleTransformerAK4JetTagsAll
+from RecoBTag.ONNXRuntime.pfUnifiedParticleTransformerAK4V1_cff import _pfUnifiedParticleTransformerAK4V1JetTagsAll as pfUnifiedParticleTransformerAK4V1JetTagsAll
+from RecoBTag.ONNXRuntime.pfParticleTransformerAK4_cff import _pfParticleTransformerAK4JetTagsAll as pfParticleTransformerAK4JetTagsAll
+from RecoBTag.ONNXRuntime.pfParticleNetAK4_cff import _pfParticleNetAK4JetTagsAll as pfParticleNetAK4JetTagsAll
+from RecoBTag.ONNXRuntime.pfParticleNetFromMiniAODAK4_cff import _pfParticleNetFromMiniAODAK4PuppiCentralJetTagsAll as pfParticleNetFromMiniAODAK4PuppiCentralJetTagsAll
+
+_btagDiscriminatorsAK4Puppi = cms.PSet(
+  names=cms.vstring(
+    pfParticleNetFromMiniAODAK4PuppiCentralJetTagsAll +
+    pfParticleNetAK4JetTagsAll +
+    pfParticleTransformerAK4JetTagsAll +
+    pfUnifiedParticleTransformerAK4V1JetTagsAll +
+    pfUnifiedParticleTransformerAK4JetTagsAll
+  )
+)
+
+updateJetCollection(
+  process,
+  jetSource = cms.InputTag("slimmedJetsPuppi"),
+  pfCandidates = cms.InputTag("packedPFCandidates"),
+  pvSource = cms.InputTag("offlineSlimmedPrimaryVertices"),
+  svSource = cms.InputTag("slimmedSecondaryVertices"),
+  muSource = cms.InputTag("slimmedMuons"),
+  elSource = cms.InputTag("slimmedElectrons"),
+  jetCorrections = ("AK4PFPuppi",["L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"],"None"),
+  btagPrefix = 'custom',
+  btagDiscriminators = _btagDiscriminatorsAK4Puppi.names.value(),
+  postfix = 'PuppiSlimmedWithUpdatedTaggers',
+)
+
+
+
+
 ##-------------------- User analyzer  --------------------------------
    
 
@@ -98,6 +140,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ## JETS/MET ########################################
   jetsAK4          = cms.InputTag('slimmedJets'), 
   jetsAK8          = cms.InputTag('slimmedJetsPuppi'),     
+  jetsAK8Updated   = cms.InputTag('selectedUpdatedPatJetsPuppiSlimmedWithUpdatedTaggers'),
   rho              = cms.InputTag('fixedGridRhoFastjetAll'),
   met              = cms.InputTag('slimmedMETs'),
   vtx              = cms.InputTag('offlineSlimmedPrimaryVertices'),
@@ -176,4 +219,25 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 process.p = cms.Path()
 process.p +=                      process.chs
+process.p +=                      process.patJetCorrFactorsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.updatedPatJetsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.packedpuppi
+process.p +=                      process.custompfUnifiedParticleTransformerAK4TagInfosPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfUnifiedParticleTransformerAK4JetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfUnifiedParticleTransformerAK4DiscriminatorsJetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfUnifiedParticleTransformerAK4V1TagInfosPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfUnifiedParticleTransformerAK4V1JetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfUnifiedParticleTransformerAK4V1DiscriminatorsJetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleTransformerAK4TagInfosPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleTransformerAK4JetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleTransformerAK4DiscriminatorsJetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleNetAK4TagInfosPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleNetAK4JetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleNetAK4DiscriminatorsJetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleNetFromMiniAODAK4PuppiCentralTagInfosPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleNetFromMiniAODAK4PuppiCentralJetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.custompfParticleNetFromMiniAODAK4PuppiCentralDiscriminatorsJetTagsPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.patJetCorrFactorsTransientCorrectedPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.updatedPatJetsTransientCorrectedPuppiSlimmedWithUpdatedTaggers
+process.p +=                      process.selectedUpdatedPatJetsPuppiSlimmedWithUpdatedTaggers
 process.p +=                      process.dijets

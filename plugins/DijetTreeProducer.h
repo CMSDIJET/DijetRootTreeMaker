@@ -71,6 +71,7 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK4_;
     edm::EDGetTokenT<pat::JetCollection> srcJetsAK8_;
+    edm::EDGetTokenT<pat::JetCollection> srcJetsAK8Updated_;
 
     edm::EDGetTokenT<double> srcRho_;
     edm::EDGetTokenT<std::vector<pat::MET> > srcMET_;
@@ -138,7 +139,13 @@ class DijetTreeProducer : public edm::one::EDAnalyzer<>
     std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_;
     std::vector<float> *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
 
-    std::vector<float> *probbAK8_, *probbbAK8_, *problepbAK8_, *probcAK8_, *probudsAK8_, *probgAK8_;
+    std::vector<float> *UParTprobbAK8_, *UParTprobbbAK8_, *UParTproblepbAK8_, *UParTprobcAK8_, *UParTprobuAK8_, *UParTprobdAK8_, *UParTprobsAK8_, *UParTprobgAK8_;
+    std::vector<float> *UParTV1probbAK8_, *UParTV1probbbAK8_, *UParTV1problepbAK8_, *UParTV1probcAK8_, *UParTV1probuAK8_, *UParTV1probdAK8_, *UParTV1probsAK8_, *UParTV1probgAK8_;
+    std::vector<float> *ParTprobbAK8_, *ParTprobbbAK8_, *ParTproblepbAK8_, *ParTprobcAK8_, *ParTprobudsAK8_, *ParTprobgAK8_;
+    std::vector<float> *ParticleNetProbbAK8_, *ParticleNetProbcAK8_, *ParticleNetProbudsAK8_, *ParticleNetProbgAK8_;
+    std::vector<float> *ParticleNetFromMiniAODAK4PuppiCentralProbbAK8_, *ParticleNetFromMiniAODAK4PuppiCentralProbcAK8_, *ParticleNetFromMiniAODAK4PuppiCentralProbudsAK8_, *ParticleNetFromMiniAODAK4PuppiCentralProbgAK8_;
+    std::vector<float> *DeepCsvProbbAK8_, *DeepCsvProbbbAK8_, *DeepCsvProbcAK8_, *DeepCsvProbudsgAK8_;
+    std::vector<float> *DeepFlavourProbbAK8_, *DeepFlavourProbbbAK8_, *DeepFlavourProblepbAK8_, *DeepFlavourProbcAK8_, *DeepFlavourProbudsAK8_, *DeepFlavourProbgAK8_;
 
     std::vector<float> *hf_hfAK8_, *hf_emfAK8_, *hofAK8_;
     std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;
